@@ -15,12 +15,12 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="动机：在软件构建过程中，集合对象内部结构常常变化各异。但对于这些集合对象，我们希望在不暴露其内部结构的同时，可以让外部客户代码透明地访问其中包含的元素；同时这种”透明遍历“也为”同一种算法在多种集合对象上进行操作“提供了可能。使用面向对象技术将这种遍历机制抽象为”迭代器对象“为”应对变化中的集合对象“提供了一种优雅的方式。 Iterator（迭代器模式）：提供一种方法顺序访问一个集合对象中的各个元">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/.com//Iterator.png">
+<meta property="og:image" content="http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/Iterator.png">
 <meta property="article:published_time" content="2021-10-08T03:04:35.000Z">
 <meta property="article:modified_time" content="2021-10-08T03:12:18.599Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/.com//Iterator.png">
+<meta name="twitter:image" content="http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/Iterator.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -184,7 +184,7 @@
 
 
 <p>类图如下：</p>
-<p><img src="/.com//Iterator.png" alt="迭代器模式" title="迭代器模式"></p>
+<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/Iterator.png" alt="迭代器模式" title="迭代器模式"></p>
 <h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
 <li>迭代抽象：访问一个聚合对象的内容而无需暴露它的内部表示。</li>
 <li>迭代多态：为遍历不同的集合结构提供一个统一的接口，从而支持同样的算法在不同的集合结构上进行操作。</li>
