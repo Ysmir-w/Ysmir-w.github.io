@@ -6,21 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>SQL优化（三）Explain中各字段的意义 | Hexo</title>
+  <title>SQL优化（三）Explain中各字段的意义 | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="id: id为select查询的序列号，表示查询中执行select子句或操作表的顺序。 当id值相同时，从上往下，顺序执行。 当id值不同时，id值越大越优先执行 当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。  select_type: PRIMARY：包含子查询SQL中的主查询（最外层查询）  SUBQUERY：包含子查询SQL中的子查询（非最外层）  SIMPLE：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SQL优化（三）Explain中各字段的意义">
 <meta property="og:url" content="http://example.com/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Ysmir的博客">
 <meta property="og:description" content="id: id为select查询的序列号，表示查询中执行select子句或操作表的顺序。 当id值相同时，从上往下，顺序执行。 当id值不同时，id值越大越优先执行 当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。  select_type: PRIMARY：包含子查询SQL中的主查询（最外层查询）  SUBQUERY：包含子查询SQL中的子查询（非最外层）  SIMPLE：">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-10T01:55:00.000Z">
-<meta property="article:modified_time" content="2021-10-12T06:57:55.106Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2021-10-13T13:25:29.575Z">
+<meta property="article:author" content="Ysmir">
+<meta property="article:tag" content="SQL优化">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Ysmir的博客" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -50,7 +51,7 @@
 			<img src="/img/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/"></a></h1>
+		  <h1 class="header-author"><a href="/">Ysmir</a></h1>
 		</hgroup>
 		
 
@@ -108,7 +109,7 @@
 				<img src="/img/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author"></h1>
+			  <h1 class="header-author js-header-author">Ysmir</h1>
 			</hgroup>
 			
 			
@@ -265,6 +266,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -383,7 +395,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 John Doe
+    		&copy; 2021 Ysmir
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -464,6 +476,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>

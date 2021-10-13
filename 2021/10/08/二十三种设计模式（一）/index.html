@@ -6,21 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>二十三种设计模式（一） | Hexo</title>
+  <title>二十三种设计模式（一） | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="面向对象设计八大原则 依赖倒置原则（DIP） 高层模块（稳定）不应该依赖于低层模块（变化），二者都应该依赖于抽象（稳定）。 抽象（稳定）不应该依赖于实现细节（变化），实现细节应该依赖于抽象（稳定）。   开放封闭原则（OCP） 对扩展开放，对更改封闭。 类模块应该是可扩展的，但是不可修改。   单一职责原则（SRP） 一个类应该仅有一个引起它变化的原因。 变化的方向隐含着类的责任。   Lisko">
 <meta property="og:type" content="article">
 <meta property="og:title" content="二十三种设计模式（一）">
 <meta property="og:url" content="http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Ysmir的博客">
 <meta property="og:description" content="面向对象设计八大原则 依赖倒置原则（DIP） 高层模块（稳定）不应该依赖于低层模块（变化），二者都应该依赖于抽象（稳定）。 抽象（稳定）不应该依赖于实现细节（变化），实现细节应该依赖于抽象（稳定）。   开放封闭原则（OCP） 对扩展开放，对更改封闭。 类模块应该是可扩展的，但是不可修改。   单一职责原则（SRP） 一个类应该仅有一个引起它变化的原因。 变化的方向隐含着类的责任。   Lisko">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-08T03:04:16.000Z">
-<meta property="article:modified_time" content="2021-10-08T03:04:45.190Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2021-10-13T13:29:03.749Z">
+<meta property="article:author" content="Ysmir">
+<meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Ysmir的博客" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -50,7 +51,7 @@
 			<img src="/img/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/"></a></h1>
+		  <h1 class="header-author"><a href="/">Ysmir</a></h1>
 		</hgroup>
 		
 
@@ -108,7 +109,7 @@
 				<img src="/img/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author"></h1>
+			  <h1 class="header-author js-header-author">Ysmir</h1>
 			</hgroup>
 			
 			
@@ -278,6 +279,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -391,7 +403,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 John Doe
+    		&copy; 2021 Ysmir
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -472,6 +484,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>

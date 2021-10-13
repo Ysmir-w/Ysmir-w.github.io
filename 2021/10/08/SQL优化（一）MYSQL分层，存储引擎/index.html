@@ -6,21 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>SQL优化（一）MYSQL分层，存储引擎 | Hexo</title>
+  <title>SQL优化（一）MYSQL分层，存储引擎 | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="MySQL分为四层： 连接层 提供与客户端的连接的服务   服务层 提供各种用户使用的接口 提供SQL优化器（MySQL QUery Optimizer)   引擎层 提过了各种存储数据的方式（InnoDB MyISAM等) InnoDB使用行锁，注重于事务，性能低，适用于高并发，MySQL默认 MyISAM使用表锁，性能有限   存储层 存储数据    查看数据库引擎命令： 1show engi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SQL优化（一）MYSQL分层，存储引擎">
 <meta property="og:url" content="http://example.com/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Ysmir的博客">
 <meta property="og:description" content="MySQL分为四层： 连接层 提供与客户端的连接的服务   服务层 提供各种用户使用的接口 提供SQL优化器（MySQL QUery Optimizer)   引擎层 提过了各种存储数据的方式（InnoDB MyISAM等) InnoDB使用行锁，注重于事务，性能低，适用于高并发，MySQL默认 MyISAM使用表锁，性能有限   存储层 存储数据    查看数据库引擎命令： 1show engi">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-08T12:31:14.000Z">
-<meta property="article:modified_time" content="2021-10-10T01:59:27.994Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2021-10-13T13:25:13.179Z">
+<meta property="article:author" content="Ysmir">
+<meta property="article:tag" content="SQL优化">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="Ysmir的博客" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -50,7 +51,7 @@
 			<img src="/img/avatar.jpg" class="js-avatar">
 		</a>
 		<hgroup>
-		  <h1 class="header-author"><a href="/"></a></h1>
+		  <h1 class="header-author"><a href="/">Ysmir</a></h1>
 		</hgroup>
 		
 
@@ -108,7 +109,7 @@
 				<img src="/img/avatar.jpg" class="js-avatar">
 			</div>
 			<hgroup>
-			  <h1 class="header-author js-header-author"></h1>
+			  <h1 class="header-author js-header-author">Ysmir</h1>
 			</hgroup>
 			
 			
@@ -233,6 +234,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -351,7 +363,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 John Doe
+    		&copy; 2021 Ysmir
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -432,6 +444,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
