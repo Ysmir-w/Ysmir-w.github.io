@@ -152,19 +152,458 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-mysql调优（一）MYSQL分层，存储引擎" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Stream流操作分类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/mysql%E8%B0%83%E4%BC%98%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">mysql调优（一）MYSQL分层，存储引擎</a>
+      <a class="article-title" href="/2021/10/12/Stream%E6%B5%81%E6%93%8D%E4%BD%9C%E5%88%86%E7%B1%BB/">Stream流操作分类</a>
     </h1>
   
 
         
-        <a href="/2021/10/08/mysql%E8%B0%83%E4%BC%98%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
+        <a href="/2021/10/12/Stream%E6%B5%81%E6%93%8D%E4%BD%9C%E5%88%86%E7%B1%BB/" class="archive-article-date">
+  	<time datetime="2021-10-12T06:05:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="中间操作："><a href="#中间操作：" class="headerlink" title="中间操作："></a>中间操作：</h3><ul>
+<li>无状态(stateless)：unordered() filter() map() mapToInt() mapToLang() mapToDouble() flatMapToInt() flatMaptoLong() flatMapToDouble() peek()</li>
+<li>有状态(stateful)：distinct() sorted() limit() skip()</li>
+</ul>
+<h3 id="中介操作"><a href="#中介操作" class="headerlink" title="中介操作"></a>中介操作</h3><ul>
+<li>非短路操作(not short-circuiting): forEach() forEachOrdered() toArray() reduce() collect() max() min() count()</li>
+<li>短路操作(short-circuiting): anyMatch() allMatch() noneMatch() findFirst() findAny()</li>
+</ul>
+<h3 id="流的常用创建方法："><a href="#流的常用创建方法：" class="headerlink" title="流的常用创建方法："></a>流的常用创建方法：</h3><ul>
+<li><p>使用Collection下的Stream()和parallelStream()方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">list.add(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;bcd&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;efg&quot;</span>);</span><br><span class="line">Stream&lt;String&gt; listStream = list.stream();</span><br><span class="line">Stream&lt;String&gt; listStream2 = list.stream().parallel();</span><br><span class="line">listStream.forEach(System.out::println);</span><br><span class="line">listStream2.forEach(System.out::println);</span><br></pre></td></tr></table></figure></li>
+<li><p>使用Arrays中的Stream()方法，将数组转换为流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Integer[] array = &#123;<span class="number">9</span>,<span class="number">8</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>&#125;;</span><br><span class="line">Stream&lt;Integer&gt; arrayStream = Arrays.stream(array);</span><br><span class="line">arrayStream.forEach(System.out::println);</span><br></pre></td></tr></table></figure></li>
+<li><p>使用Stream中的静态方法，of(),iterate(),generate()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Integer&gt; stream = <span class="keyword">null</span>;</span><br><span class="line">stream = Stream.of(<span class="number">10</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>);</span><br><span class="line">stream.forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">stream = Stream.iterate(<span class="number">0</span>, (x) -&gt; x + <span class="number">3</span>).limit(<span class="number">3</span>);</span><br><span class="line">stream.forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">stream = Stream.generate(()-&gt;<span class="number">999</span>).limit(<span class="number">3</span>);</span><br><span class="line">stream.forEach(System.out::println);</span><br></pre></td></tr></table></figure></li>
+<li><p>使用BuffferedReader.lines()方法，将每行转换为流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;String&gt; stream = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            stream = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(<span class="keyword">new</span> FileInputStream(<span class="keyword">new</span> File(<span class="string">&quot;C:\\Users\\Ysmir\\Desktop\\新建文本文档.txt&quot;</span>)))).lines();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        stream.forEach((e)-&gt; System.out.println(e));</span><br></pre></td></tr></table></figure></li>
+<li><p>使用Pattern.splitAsStream()方法，将字符串分隔成流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;String&gt; stream = <span class="keyword">null</span>;</span><br><span class="line">        Pattern pattern = Pattern.compile(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        stream = pattern.splitAsStream(<span class="string">&quot;Hello, world;&quot;</span>);</span><br><span class="line">        stream.forEach((e)-&gt; System.out.println(e));</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/12/Stream%E6%B5%81%E6%93%8D%E4%BD%9C%E5%88%86%E7%B1%BB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SQL优化（四）SQL优化总结及避免索引失效的原则" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/">SQL优化（四）SQL优化总结及避免索引失效的原则</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/" class="archive-article-date">
+  	<time datetime="2021-10-11T11:57:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="SQL优化总结"><a href="#SQL优化总结" class="headerlink" title="SQL优化总结"></a>SQL优化总结</h3><ul>
+<li><p>单表优化</p>
+<ul>
+<li>最佳左前缀，保持索引的定义和使用的顺序一致性</li>
+<li>索引需要逐步优化</li>
+<li>将含in的范围查询 放到where最后，防止复合索引失效</li>
+</ul>
+</li>
+<li><p>双表优化</p>
+<ul>
+<li>小表驱动大表</li>
+<li>索引建立在经常使用的字段上</li>
+<li>对于左外连接来说，一半给左表加索引，右外连接给右表加索引。</li>
+</ul>
+</li>
+<li><p>三表优化</p>
+<ul>
+<li>小表驱动大表</li>
+<li>索引建立在经常查询的字段上</li>
+</ul>
+</li>
+</ul>
+<h3 id="避免索引失效的原则"><a href="#避免索引失效的原则" class="headerlink" title="避免索引失效的原则"></a>避免索引失效的原则</h3><ul>
+<li>复合索引<ul>
+<li>复合索引不要跨列或无序使用（最佳左前缀）</li>
+<li>复合索引尽量使用全索引匹配</li>
+<li>不能使用不等于(!= &lt;&gt; )或 is null, is not null</li>
+</ul>
+</li>
+<li>不要在索引上进行任何操作<ul>
+<li>计算</li>
+<li>函数</li>
+<li>类型转换等</li>
+</ul>
+</li>
+<li>SQL优化是一种概率层面的优化，不是100%成功。至于是否使用了优化，需要使用explain来验证。</li>
+<li>尽量使用索引覆盖（using index)来避免出现概率件</li>
+<li>like尽量以常量开头，不要以%开头</li>
+<li>尽量不要使用索引覆盖</li>
+</ul>
+<h3 id="其他的一些优化方法"><a href="#其他的一些优化方法" class="headerlink" title="其他的一些优化方法"></a>其他的一些优化方法</h3><h4 id="exists和in："><a href="#exists和in：" class="headerlink" title="exists和in："></a>exists和in：</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">exists</span> (子查询);</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> 字段 <span class="keyword">in</span> (子查询);</span><br></pre></td></tr></table></figure>
+
+<p>如果主查询数据集大，则使用in。</p>
+<p>如果子查询的数据集大，则使用exists。</p>
+<h4 id="order-by优化："><a href="#order-by优化：" class="headerlink" title="order by优化："></a>order by优化：</h4><p>using filesort有两种算法：双路排序、单路排序（根据访问Io的次数区分）</p>
+<p>MySQL4.1之前默认使用双路排序，4.1之后默认使用单路。</p>
+<p>双路排序：扫描两次磁盘，第一次从磁盘读取排序字段，第二次扫描其他字段，在第一次扫描磁盘与第二次扫描磁盘之间会对排序字段进行排序操作（在Buffer中进行）。</p>
+<p>单路排序：只读取一次磁盘，一次读取所有字段，在buffer中进行排序。虽然单路排序减少了访问Io的次数，提升了性能，但单路排序有隐患。如果数据量特别大，则无法将数据一次性读取完毕，会分片读取，单路排序不一定只访问了一次磁盘，有可能进行了多次Io。注意，单路排序比双路排序占用了更多的buffer。单路排序在使用时，如果数据大，可以考虑调大buffer的容量大小。命令为： set max_length_for_sort_data = 1024(单位为字节)</p>
+<p>如果max_length_for_sort_data值太低，MySQL会自动从单路排序切换至双路排序。</p>
+<p>提高order by查询的策略：</p>
+<ul>
+<li>选择使用单路、双路；调整buffer的容量大小</li>
+<li>避免使用select * … </li>
+<li>复合索引不要跨列使用，会出现using filesort</li>
+<li>尽量保证排序字段，排序的一致性（都是升序或降序）</li>
+</ul>
+<h4 id="SQL排查-慢查询日志"><a href="#SQL排查-慢查询日志" class="headerlink" title="SQL排查-慢查询日志"></a>SQL排查-慢查询日志</h4><p>慢查询日志：MySQL提供的一种日志记录，用于记录MySQL中响应时间超过阈值的SQL语句（long_query_time，默认为10秒）</p>
+<p>慢查询日志默认为关闭，建议开发调优是打开，而最终部署时关闭。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*检查是否开启了慢查询日志*/</span></span><br><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%slow_query_log%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*临时开启慢查询日志，退出MySQL(关闭服务)时自动关闭*/</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> show_query_log <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*永久开启慢查询日志</span></span><br><span class="line"><span class="comment">在MySQL配置文件中添加</span></span><br><span class="line"><span class="comment">[mysqld]</span></span><br><span class="line"><span class="comment">slow_query_log=1</span></span><br><span class="line"><span class="comment">slow_query_log_file=日志存放地址</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*临时设置阈值，修改后重新登陆生效*/</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> long_query_time <span class="operator">=</span> <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*永久设置阈值</span></span><br><span class="line"><span class="comment">在MySQL配置文件中添加</span></span><br><span class="line"><span class="comment">[mysqld]</span></span><br><span class="line"><span class="comment">long_query_time=5</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*查看慢SQL*/</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> status <span class="keyword">like</span> <span class="string">&#x27;%slow_queries%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="通过mysqldumpslow工具查看慢查询日志"><a href="#通过mysqldumpslow工具查看慢查询日志" class="headerlink" title="通过mysqldumpslow工具查看慢查询日志"></a>通过mysqldumpslow工具查看慢查询日志</h4><p>mysqldumpslow工具可以查看慢SQL，可以通过一些过滤条件，快速的查找定义出慢SQL；</p>
+<p>mysqldumpslow –help </p>
+<ul>
+<li>s:排序方式</li>
+<li>r:逆序</li>
+<li>l:锁定时间</li>
+<li>g:正则匹配模式</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/*获取返回记录最多的3个SQL*/</span><br><span class="line">mysqldumpslow -s r -t 3 日志地址</span><br><span class="line">/*获取访问次数最多的3个SQL*/</span><br><span class="line">mysqldumpslow -s c -t 3 日志地址</span><br><span class="line">/*按照时间排序，前10条包含left join查询语句的SQL*/</span><br><span class="line">mysqldumpslow -s t -t 10 -g &quot;left join&quot; 日志地址</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SQL优化（三）Explain中各字段的意义" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/">SQL优化（三）Explain中各字段的意义</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/" class="archive-article-date">
+  	<time datetime="2021-10-10T01:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="id"><a href="#id" class="headerlink" title="id:"></a>id:</h3><ul>
+<li>id为select查询的序列号，表示查询中执行select子句或操作表的顺序。</li>
+<li>当id值相同时，从上往下，顺序执行。</li>
+<li>当id值不同时，id值越大越优先执行</li>
+<li>当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。</li>
+</ul>
+<h3 id="select-type"><a href="#select-type" class="headerlink" title="select_type:"></a>select_type:</h3><ul>
+<li><p>PRIMARY：包含子查询SQL中的主查询（最外层查询）</p>
+</li>
+<li><p>SUBQUERY：包含子查询SQL中的子查询（非最外层）</p>
+</li>
+<li><p>SIMPLE：简单查询（不包含子查询，不包含union）</p>
+</li>
+<li><p>DERIVED：衍生查询（在查询时使用了临时表）</p>
+<ul>
+<li><p>在from子查询中只有一张表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> cname <span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="keyword">in</span>(<span class="number">1</span>,<span class="number">2</span>));</span><br></pre></td></tr></table></figure></li>
+<li><p>在from子查询中，如果有table1 union table2 ，则table 就是derived,table2就是union</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> cname <span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="operator">=</span> <span class="number">1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="operator">=</span> <span class="number">2</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>UNION RESULT:告知开发人员哪些表之间存在union查询</p>
+</li>
+</ul>
+<h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><p>指当前查询查询的表</p>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>索引类型，常用的有system,const,eq_ref,ref,range,index,all等</p>
+<p>其中system,const为理想情况，实际能达到ref,range级别。</p>
+<ul>
+<li><p>system:只有一条数据的系统表（基本达不到，忽略）或衍生表只有一条数据的主查询（偶尔能达到）</p>
+</li>
+<li><p>const:仅仅能查到一条语句，用于primary key 或 unique索引(类型与索引类型有关)</p>
+</li>
+<li><p>eq_ref:唯一性索引，对于每个索引键的查询，返回匹配唯一行数据（有且只有一个，不能多，也不能为0）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ... <span class="keyword">from</span> <span class="keyword">where</span> name<span class="operator">=</span>....</span><br><span class="line"><span class="comment">/*只返回一条数据，常见于唯一索引和主键索引。*/</span></span><br></pre></td></tr></table></figure></li>
+<li><p>ref:非唯一性索引，对于每个索引键的查询，返回匹配的所有行。</p>
+</li>
+<li><p>range:检索指定范围的数据,where 后面是一个范围查询(between , in  ,&gt; &gt;= &lt; &lt;= ， in有时候会失效，从而转变为all 无索引)</p>
+</li>
+<li><p>index:查询全部索引中的数据</p>
+</li>
+<li><p>all:查询表中的全部数据</p>
+</li>
+</ul>
+<h3 id="possible-keys"><a href="#possible-keys" class="headerlink" title="possible_keys"></a>possible_keys</h3><p>可能用大的索引，是一种预测。</p>
+<h3 id="key"><a href="#key" class="headerlink" title="key"></a>key</h3><p>实际使用到的索引</p>
+<h3 id="key-len"><a href="#key-len" class="headerlink" title="key_len"></a>key_len</h3><p>索引的长度，用于判断复合索引是否完全被使用。</p>
+<h3 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h3><p>指明当前表所参照的字段</p>
+<h3 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h3><p>被索引优化查询的数据个数（实际通过索引查询到的数据个数）</p>
+<h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><h4 id="using-filesort"><a href="#using-filesort" class="headerlink" title="using filesort:"></a>using filesort:</h4><p>性能消耗大；需要“额外”的一次排序（查询）。对于单索引，如果查询和排序是同一字段，则不会出现using filesort，如果排序和查找不是同一字段，会出现。复合索引不能跨列（最佳左前缀），不然会出现using filesort;</p>
+<p>为了避免出现using filesort，单索引应该where 哪些字段，就order by哪些字段。复合索引按照复合索引的顺序使用，不要跨列或者无序使用。</p>
+<h4 id="using-temporar"><a href="#using-temporar" class="headerlink" title="using temporar:"></a>using temporar:</h4><p>性能损耗大，用到了临时表。一般出现在group by语句中。</p>
+<p>解析过程：</p>
+<p>from .. on .. jion .. where .. group by .. having .. select distinct ..order by limit ….</p>
+<h4 id="using-index"><a href="#using-index" class="headerlink" title="using index:"></a>using index:</h4><p>性能提升，索引覆盖（覆盖索引）。原因：此次SQL查询不读取原文件，只从索引中查询数据。（不需要回表查询）。</p>
+<p>如果用到了索引覆盖(using index)，会对possible_keys和key造成影响。</p>
+<ul>
+<li>如果没有where,则索引只出现在key中。</li>
+<li>如果有where,则索引会出现在key和possible_keys中。</li>
+</ul>
+<h4 id="using-where："><a href="#using-where：" class="headerlink" title="using where："></a>using where：</h4><p>需要回表查询</p>
+<h4 id="impossible-where："><a href="#impossible-where：" class="headerlink" title="impossible where："></a>impossible where：</h4><p>where 子句永远为false</p>
+<h4 id="using-join-buffer"><a href="#using-join-buffer" class="headerlink" title="using join buffer:"></a>using join buffer:</h4><p>mysql使用了连接缓存</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SQL优化（二）SQL解析过程、索引" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/">SQL调优（二）SQL解析过程、索引</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/" class="archive-article-date">
+  	<time datetime="2021-10-09T10:47:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="SQL优化的原因是什么？"><a href="#SQL优化的原因是什么？" class="headerlink" title="SQL优化的原因是什么？"></a>SQL优化的原因是什么？</h3><p>原因：性能低、执行时间长、等待时间太长、SQL语句欠佳（连接查询）、索引失效、服务器设置失效、SQL的编写过程与解析过程不一致等。</p>
+<p>SQL编写过程：</p>
+<p>​    select distinct .. from ..join .. on .. where ..group by ..having ..order by ..limit ..</p>
+<p>SQL解析过程：</p>
+<p>​    from .. on .. join .. where .. group by .. having ..select distinct .. order by  .. limit ..</p>
+<h3 id="SQL优化"><a href="#SQL优化" class="headerlink" title="SQL优化"></a>SQL优化</h3><p>SQL优化，主要是在于优化索引。索引，相当于一本书的目录，索引（index）是帮助mysql高效获取数据的数据结构。索引的数据结构是树，一般采用B树，B+树，哈希树等结构。</p>
+<p>索引虽然可以加速SQL查询的效率（降低IO使用率，降低CPU占用率），然而索引并不是所有的情况都适用，因为索引本身很大，通常存放在硬盘或内存中。而且索引会降低增删改的效率，因为添加索引后，增删改操作不仅需要更改表，还需要更改索引。</p>
+<p>不适用使用索引的情况：</p>
+<ul>
+<li>少量数据</li>
+<li>频繁变更的字段</li>
+<li>很少使用的字段</li>
+</ul>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>索引的分类：</p>
+<ul>
+<li>单值索引：只有一列的索引，一个表可有有多个单值索引。</li>
+<li>唯一索引：唯一索引不能重复。</li>
+<li>复合索引：由多个列构成，相当于书的二级目录。</li>
+<li>主键索引：主键索引不能为空且唯一。</li>
+</ul>
+<p>创建索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> 索引类型 索引名 <span class="keyword">on</span> 表(字段);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 索引类型 索引名(字段);</span><br></pre></td></tr></table></figure>
+
+<p>单值索引创建如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index 索引名 <span class="keyword">on</span> 表(字段);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 index 索引名(字段);</span><br></pre></td></tr></table></figure>
+
+<p>唯一索引创建如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> index 索引名 <span class="keyword">on</span> 表(字段);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> <span class="keyword">unique</span> index 索引名(字段);</span><br></pre></td></tr></table></figure>
+
+<p>复合索引创建如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index 索引名 <span class="keyword">on</span> 表(字段,字段.......);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> index 索引名(字段,字段......)</span><br></pre></td></tr></table></figure>
+
+<p>注意事项：如果一个字段是primary key，则该字段默认为主键索引。</p>
+<p>删除索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> index 索引名 <span class="keyword">on</span> 表名;</span><br></pre></td></tr></table></figure>
+
+<p>查询索引:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> index <span class="keyword">from</span> 表名;</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SQL优化（一）MYSQL分层，存储引擎" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">SQL优化（一）MYSQL分层，存储引擎</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
   	<time datetime="2021-10-08T12:31:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
 </a>
         
@@ -214,7 +653,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/mysql%E8%B0%83%E4%BC%98%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">展开全文 >></a>
         </p>
       
 
@@ -597,303 +1036,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%80%EF%BC%89ChainOfResponsibility%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（二十）Iterator迭代器模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/">二十三种设计模式（二十）Iterator 迭代器模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，集合对象内部结构常常变化各异。但对于这些集合对象，我们希望在不暴露其内部结构的同时，可以让外部客户代码透明地访问其中包含的元素；同时这种”透明遍历“也为”同一种算法在多种集合对象上进行操作“提供了可能。使用面向对象技术将这种遍历机制抽象为”迭代器对象“为”应对变化中的集合对象“提供了一种优雅的方式。</p>
-<p>Iterator（迭代器模式）：提供一种方法顺序访问一个集合对象中的各个元素，而又不暴露（稳定）该对象的内部表示。</p>
-<p>Iterator迭代器模式代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">E <span class="title">first</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">E <span class="title">next</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteIterator</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;E&gt; list=<span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> index=-<span class="number">1</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteIterator</span><span class="params">(List&lt;E&gt; list)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.list=list;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">first</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        index=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> list.get(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        E e = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span>.hasNext())</span><br><span class="line">        &#123;</span><br><span class="line">            e=list.get(++index);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (index&lt;list.size()-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Aggregate</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Iterator&lt;Object&gt; <span class="title">getIterator</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteAggregate</span> <span class="keyword">implements</span> <span class="title">Aggregate</span></span>&#123;</span><br><span class="line">    List&lt;Object&gt; list = <span class="keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        list.add(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        list.remove(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Iterator&lt;Object&gt; <span class="title">getIterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ConcreteIterator&lt;Object&gt;(list);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Aggregate aggregate = <span class="keyword">new</span> ConcreteAggregate();</span><br><span class="line">        aggregate.add(<span class="string">&quot;zs&quot;</span>);</span><br><span class="line">        aggregate.add(<span class="string">&quot;ls&quot;</span>);</span><br><span class="line">        aggregate.add(<span class="string">&quot;ww&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Iterator iterator = aggregate.getIterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext())</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(iterator.next());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/Iterator.png" alt="迭代器模式" title="迭代器模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>迭代抽象：访问一个聚合对象的内容而无需暴露它的内部表示。</li>
-<li>迭代多态：为遍历不同的集合结构提供一个统一的接口，从而支持同样的算法在不同的集合结构上进行操作。</li>
-<li>迭代器的健壮性考虑：遍历的同时更改迭代器所在的集合结构，会导致问题。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%EF%BC%89Iterator%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（十九）Composite组合模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89Composite%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/">二十三种设计模式（十九）Composite 组合模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89Composite%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：软件在某些情况下，客户代码过多地依赖于对象容器复杂的内部实现结构，对象容器内部实现结构（而非抽象接口）的变化将引起客户代码的频繁变化，带来了代码的维护性、扩展性等弊端。Composite组合模式可以将”客户代码与复杂的对象容器结构“解耦，让对象容器自己来实现自身的复杂结构，从而使得客户代码就像处理简单对象一样来处理复杂的容器对象。</p>
-<p>Composite（组合模式）：将对象组合成树形结构以表示”部分-整体“的层次结构。Composite使得用户对单个对象和组合对象的使用具有<strong>一致性</strong>（稳定）。</p>
-<p>Composite组合模式代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Component component)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Component component)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Component <span class="title">getChild</span><span class="params">(<span class="keyword">int</span> i)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Composite</span> <span class="keyword">implements</span> <span class="title">Component</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Component&gt; components = <span class="keyword">new</span> ArrayList&lt;Component&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Component component)</span> </span>&#123;</span><br><span class="line">        components.add(component);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Component component)</span> </span>&#123;</span><br><span class="line">        component.remove(component);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Component <span class="title">getChild</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> components.get(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Component component:components)</span><br><span class="line">        &#123;</span><br><span class="line">            component.operation();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Leaf</span> <span class="keyword">implements</span> <span class="title">Component</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Leaf</span><span class="params">(String name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name=name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Component component)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;此节点为叶子节点，不能添加子节点&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Component component)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;此节点为叶子节点，不能删除子节点&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Component <span class="title">getChild</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;此节点尾叶子节点，没有子节点&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;叶子节点&quot;</span>+name+<span class="string">&quot;被访问&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Component root = <span class="keyword">new</span> Composite();</span><br><span class="line">        Component composite1 = <span class="keyword">new</span> Composite();</span><br><span class="line">        Component composite2 = <span class="keyword">new</span> Composite();</span><br><span class="line"></span><br><span class="line">        Component leaf1 = <span class="keyword">new</span> Leaf(<span class="string">&quot;叶子节点1&quot;</span>);</span><br><span class="line">        Component leaf2 = <span class="keyword">new</span> Leaf(<span class="string">&quot;叶子节点2&quot;</span>);</span><br><span class="line"></span><br><span class="line">        root.add(composite1);</span><br><span class="line">        composite1.add(composite2);</span><br><span class="line"></span><br><span class="line">        composite1.add(leaf1);</span><br><span class="line"></span><br><span class="line">        composite2.add(leaf2);</span><br><span class="line"></span><br><span class="line">        root.operation();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89Composite%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/Composite.png" alt="组合模式" title="组合模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>Composite模式采用树形结构来实现普遍存在的对象容器，从而将”一对多“的关系转化为”一对一“的关系，使得客户代码可以一致地（复用）处理对象和对象容器，无需关心处理的是单个的对象，还是组合的对象容器。</li>
-<li>将”客户代码与复杂的对象容器结构“解耦是Composite的核心思想。解耦之后，客户代码将与纯粹的抽象接口——而非对象容器的内部实现结构——发生依赖，从而更能”应对变化“。</li>
-<li>Composite模式在具体实现中，可以让父对象中的子对象反向追溯；如果父对象有频繁的遍历需求，可使用缓存技巧来改善效率。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B9%9D%EF%BC%89Composite%E7%BB%84%E5%90%88%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（十八）Memento备忘录模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89Memento%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/">二十三种设计模式（十八）Memento 备忘录模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89Memento%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，某些对象的状态在转换过程中，可能由于某种需要，要求程序能够回溯到对象之前处于某个点时的状态。如果使用一些公有接口来让其他对象得到对象的状态，便会暴露对象的实现细节。Memento备忘录模式能够实现对象状态的良好保存与恢复，但同时又不会因此而破坏对象本身的封装性。</p>
-<p>Memento（备忘录模式）：在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。这样以后就可以将该对象恢复到原先保存状态。</p>
-<p>Memento备忘录模式代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Originator</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String state;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getState</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setState</span><span class="params">(String state)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.state = state;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Memento <span class="title">createMemento</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Memento(state);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMemento</span><span class="params">(Memento memento)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        setState(memento.getState());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Memento</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String state;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Memento</span><span class="params">(String state)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.state=state;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getState</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setState</span><span class="params">(String state)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.state = state;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Caretaker</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Originator originator = <span class="keyword">new</span> Originator();</span><br><span class="line">        originator.setState(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">        Memento memento =  originator.createMemento();</span><br><span class="line">        System.out.println(<span class="string">&quot;Originator的状态为:&quot;</span>+originator.getState());</span><br><span class="line">        System.out.println(<span class="string">&quot;Memento保存的状态为:&quot;</span>+memento.getState());</span><br><span class="line"></span><br><span class="line">        originator.setState(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;Originator的状态为:&quot;</span>+originator.getState());</span><br><span class="line">        System.out.println(<span class="string">&quot;Memento保存的状态为:&quot;</span>+memento.getState());</span><br><span class="line"></span><br><span class="line">        originator.setState(<span class="string">&quot;3&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;Originator的状态为:&quot;</span>+originator.getState());</span><br><span class="line">        System.out.println(<span class="string">&quot;Memento保存的状态为:&quot;</span>+memento.getState());</span><br><span class="line"></span><br><span class="line">        originator.setMemento(memento);</span><br><span class="line">        System.out.println(<span class="string">&quot;Originator的状态为:&quot;</span>+originator.getState());</span><br><span class="line">        System.out.println(<span class="string">&quot;Memento保存的状态为:&quot;</span>+memento.getState());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89Memento%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/Memento.png" alt="备忘录模式" title="备忘录模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>备忘录（Memento）存储原发器（Originator）对象的内部状态，在需要时恢复原发器状态。</li>
-<li>Memento模式的核心是信息隐藏，即Originator需要向外界隐藏信息，保持封装性。但同时又需要将状态保存到外界（Memento）。</li>
-<li>由于现代语言运行时（如C#，Java等）都具有相当的对象序列化支持，因此往往采用效率较高、有较容易正确实现的序列化方案来实现Memento模式。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89Memento%E5%A4%87%E5%BF%98%E5%BD%95%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（十七）State状态模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%83%EF%BC%89State%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/">二十三种设计模式（十七）State 状态模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%83%EF%BC%89State%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，某些对象的状态如果改变，其行为也会随之而发生变化，比如文档处于只读状态，其支持的行为和读写状态支持的行为就可能完全不同。State状态模式剋以在运行时根据对象的状态来透明地更改对象的行为，而不会为对象操作和状态转化之间引入紧耦合。</p>
-<p>State（状态模式）：允许一个对象在其内部状态改变时改变它的行为。从而使对象看起来似乎修改了其行为。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">State</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Context context)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Context</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> State state;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Context</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.state=<span class="keyword">new</span> ConcreteStateA();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Context</span><span class="params">(State state)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.state = state;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> State <span class="title">getState</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setState</span><span class="params">(State state)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.state = state;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        state.handle(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateA</span> <span class="keyword">implements</span> <span class="title">State</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前状态为状态A&quot;</span>);</span><br><span class="line">        context.setState(<span class="keyword">new</span> ConcreteStateB());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteStateB</span> <span class="keyword">implements</span> <span class="title">State</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;当前状态为B&quot;</span>);</span><br><span class="line">        context.setState(<span class="keyword">new</span> ConcreteStateA());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Context context = <span class="keyword">new</span> Context();</span><br><span class="line">        context.handle();</span><br><span class="line">        context.handle();</span><br><span class="line">        context.handle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%83%EF%BC%89State%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/State.png" alt="状态模式" title="状态模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>State模式将所有与一个特定状态相关的行为都放入一个State的子类对象中，在对象状态切换时，切换相应的对象；但同时维持State的接口，这样实现了具体操作与状态转换之间的解耦。</li>
-<li>为不同的状态引入不同的对象使得状态转换变得更加明确，而且可以保证不会出现状态不一致的情况，因为转换是原子性的——即要么彻底转换过来，要么不转换。</li>
-<li>如果State对象没有实例变量，那么各个上下文可以共享同一个State对象，从而节省对象开销。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%83%EF%BC%89State%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
         </p>
       
 

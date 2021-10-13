@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2021/10 | Hexo</title>
+  <title>SQL优化（三）Explain中各字段的意义 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2021/10/page/3/index.html">
+  <meta name="description" content="id: id为select查询的序列号，表示查询中执行select子句或操作表的顺序。 当id值相同时，从上往下，顺序执行。 当id值不同时，id值越大越优先执行 当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。  select_type: PRIMARY：包含子查询SQL中的主查询（最外层查询）  SUBQUERY：包含子查询SQL中的子查询（非最外层）  SIMPLE：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL优化（三）Explain中各字段的意义">
+<meta property="og:url" content="http://example.com/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="id: id为select查询的序列号，表示查询中执行select子句或操作表的顺序。 当id值相同时，从上往下，顺序执行。 当id值不同时，id值越大越优先执行 当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。  select_type: PRIMARY：包含子查询SQL中的主查询（最外层查询）  SUBQUERY：包含子查询SQL中的子查询（非最外层）  SIMPLE：">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-10-10T01:55:00.000Z">
+<meta property="article:modified_time" content="2021-10-12T06:57:55.106Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -150,295 +154,225 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-SQL优化（三）Explain中各字段的意义" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SQL优化（三）Explain中各字段的意义
+    </h1>
+  
+
+        
+        <a href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/" class="archive-article-date">
+  	<time datetime="2021-10-10T01:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-10</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="id"><a href="#id" class="headerlink" title="id:"></a>id:</h3><ul>
+<li>id为select查询的序列号，表示查询中执行select子句或操作表的顺序。</li>
+<li>当id值相同时，从上往下，顺序执行。</li>
+<li>当id值不同时，id值越大越优先执行</li>
+<li>当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。</li>
+</ul>
+<h3 id="select-type"><a href="#select-type" class="headerlink" title="select_type:"></a>select_type:</h3><ul>
+<li><p>PRIMARY：包含子查询SQL中的主查询（最外层查询）</p>
+</li>
+<li><p>SUBQUERY：包含子查询SQL中的子查询（非最外层）</p>
+</li>
+<li><p>SIMPLE：简单查询（不包含子查询，不包含union）</p>
+</li>
+<li><p>DERIVED：衍生查询（在查询时使用了临时表）</p>
+<ul>
+<li><p>在from子查询中只有一张表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> cname <span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="keyword">in</span>(<span class="number">1</span>,<span class="number">2</span>));</span><br></pre></td></tr></table></figure></li>
+<li><p>在from子查询中，如果有table1 union table2 ，则table 就是derived,table2就是union</p>
+ <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> cname <span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="operator">=</span> <span class="number">1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="operator">=</span> <span class="number">2</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>UNION RESULT:告知开发人员哪些表之间存在union查询</p>
+</li>
+</ul>
+<h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><p>指当前查询查询的表</p>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>索引类型，常用的有system,const,eq_ref,ref,range,index,all等</p>
+<p>其中system,const为理想情况，实际能达到ref,range级别。</p>
+<ul>
+<li><p>system:只有一条数据的系统表（基本达不到，忽略）或衍生表只有一条数据的主查询（偶尔能达到）</p>
+</li>
+<li><p>const:仅仅能查到一条语句，用于primary key 或 unique索引(类型与索引类型有关)</p>
+</li>
+<li><p>eq_ref:唯一性索引，对于每个索引键的查询，返回匹配唯一行数据（有且只有一个，不能多，也不能为0）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ... <span class="keyword">from</span> <span class="keyword">where</span> name<span class="operator">=</span>....</span><br><span class="line"><span class="comment">/*只返回一条数据，常见于唯一索引和主键索引。*/</span></span><br></pre></td></tr></table></figure></li>
+<li><p>ref:非唯一性索引，对于每个索引键的查询，返回匹配的所有行。</p>
+</li>
+<li><p>range:检索指定范围的数据,where 后面是一个范围查询(between , in  ,&gt; &gt;= &lt; &lt;= ， in有时候会失效，从而转变为all 无索引)</p>
+</li>
+<li><p>index:查询全部索引中的数据</p>
+</li>
+<li><p>all:查询表中的全部数据</p>
+</li>
+</ul>
+<h3 id="possible-keys"><a href="#possible-keys" class="headerlink" title="possible_keys"></a>possible_keys</h3><p>可能用大的索引，是一种预测。</p>
+<h3 id="key"><a href="#key" class="headerlink" title="key"></a>key</h3><p>实际使用到的索引</p>
+<h3 id="key-len"><a href="#key-len" class="headerlink" title="key_len"></a>key_len</h3><p>索引的长度，用于判断复合索引是否完全被使用。</p>
+<h3 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h3><p>指明当前表所参照的字段</p>
+<h3 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h3><p>被索引优化查询的数据个数（实际通过索引查询到的数据个数）</p>
+<h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><h4 id="using-filesort"><a href="#using-filesort" class="headerlink" title="using filesort:"></a>using filesort:</h4><p>性能消耗大；需要“额外”的一次排序（查询）。对于单索引，如果查询和排序是同一字段，则不会出现using filesort，如果排序和查找不是同一字段，会出现。复合索引不能跨列（最佳左前缀），不然会出现using filesort;</p>
+<p>为了避免出现using filesort，单索引应该where 哪些字段，就order by哪些字段。复合索引按照复合索引的顺序使用，不要跨列或者无序使用。</p>
+<h4 id="using-temporar"><a href="#using-temporar" class="headerlink" title="using temporar:"></a>using temporar:</h4><p>性能损耗大，用到了临时表。一般出现在group by语句中。</p>
+<p>解析过程：</p>
+<p>from .. on .. jion .. where .. group by .. having .. select distinct ..order by limit ….</p>
+<h4 id="using-index"><a href="#using-index" class="headerlink" title="using index:"></a>using index:</h4><p>性能提升，索引覆盖（覆盖索引）。原因：此次SQL查询不读取原文件，只从索引中查询数据。（不需要回表查询）。</p>
+<p>如果用到了索引覆盖(using index)，会对possible_keys和key造成影响。</p>
+<ul>
+<li>如果没有where,则索引只出现在key中。</li>
+<li>如果有where,则索引会出现在key和possible_keys中。</li>
+</ul>
+<h4 id="using-where："><a href="#using-where：" class="headerlink" title="using where："></a>using where：</h4><p>需要回表查询</p>
+<h4 id="impossible-where："><a href="#impossible-where：" class="headerlink" title="impossible where："></a>impossible where：</h4><p>where 子句永远为false</p>
+<h4 id="using-join-buffer"><a href="#using-join-buffer" class="headerlink" title="using join buffer:"></a>using join buffer:</h4><p>mysql使用了连接缓存</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%EF%BC%89Builder%E6%9E%84%E5%BB%BA%E5%99%A8/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%EF%BC%89Builder%E6%9E%84%E5%BB%BA%E5%99%A8/">二十三种设计模式（十）Builder 构建器</a>
-    </h1>
-  
+      
 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B9%9D%EF%BC%89Prototype%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          SQL优化（四）SQL优化总结及避免索引失效的原则
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SQL调优（二）SQL解析过程、索引</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B9%9D%EF%BC%89Prototype%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">二十三种设计模式（九）Prototype 原型模式</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AB%EF%BC%89AbstractFactory%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AB%EF%BC%89AbstractFactory%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82/">二十三种设计模式（八） Abstract Factory 抽象工厂</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%83%EF%BC%89FactoryMethod%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%83%EF%BC%89FactoryMethod%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95/">二十三种设计模式（七） Factory Method 工厂方法</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AD%EF%BC%89Bridge%E6%A1%A5%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%85%AD%EF%BC%89Bridge%E6%A1%A5%E6%A8%A1%E5%BC%8F/">二十三种设计模式（六） Bridge 桥模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%94%EF%BC%89Decorator%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%94%EF%BC%89Decorator%E8%A3%85%E9%A5%B0%E6%A8%A1%E5%BC%8F/">二十三种设计模式（五）Decorator 装饰模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%9B%9B%EF%BC%89Observer%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%9B%9B%EF%BC%89Observer%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">二十三种设计模式（四） Observer 观察者模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%89%EF%BC%89Strategy%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%89%EF%BC%89Strategy%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/">二十三种设计模式（三）Strategy 策略模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%EF%BC%89TemplateMethod%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%EF%BC%89TemplateMethod%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95/">二十三种设计模式（二）Template Method 模板方法</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/">二十三种设计模式（一）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2021/10/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2021/10/">1</a><a class="page-number" href="/archives/2021/10/page/2/">2</a><span class="page-number current">3</span>
-    </nav>
   
 
 
@@ -462,8 +396,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
