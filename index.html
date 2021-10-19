@@ -152,6 +152,218 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JVM（二）JAVA内存模型（Java-Memory-Model，简称JMM）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/">JVM（二）JAVA内存模型（Java Memory Model，简称JMM）</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" class="archive-article-date">
+  	<time datetime="2021-10-19T11:34:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h2><p>JMM主要用于定义变量的访问规则（所有线程的共享变量，不能是局部变量），它将内存划分为两个区域：主内存区，工作内存区</p>
+<p><img src="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/JMM.png" alt="JMM" title="JMM"></p>
+<ul>
+<li>主内存区：真实存放变量</li>
+<li>工作内存：存放各个变量的副本，供各个线程所使用。</li>
+</ul>
+<p>各个线程不能直接访问主内存，也不能访问其他线程的工作内存，只能访问自己私有的工作内存，通过主内存间接的访问其他线程的工作内存，这是高并发下数据不安全的根本原因。</p>
+<p>如果线程B修改了变量i的值，线程A如何才能获取到线程B修改后的值？</p>
+<ol>
+<li>线程B将数据同步到主内存——Save</li>
+<li>线程A获取主内存中最新的数据——Load</li>
+</ol>
+<h4 id="不同线程交换数据时经历的步骤"><a href="#不同线程交换数据时经历的步骤" class="headerlink" title="不同线程交换数据时经历的步骤"></a>不同线程交换数据时经历的步骤</h4><ol>
+<li>Lock:将主内存中的变量，标识为一条线程的独占状态</li>
+<li>Read:将主内存中的变量读取或拷贝到工作内存中。</li>
+<li>Load:将2中读取的变量拷贝到变量的副本中。</li>
+<li>Use:将工作内存中的变量副本传递给线程使用。</li>
+</ol>
+<hr>
+<ol start="5">
+<li>Assign:把线程正在使用的变量，传递给工作内存中的变量副本中。</li>
+<li>Store:将工作内存中变量副本的值，传递到主内存中。</li>
+<li>Write:将6中传过来的变量副本的值作为一个主内存中的变量进行存储。</li>
+<li>Unlock:解除线程的独占状态。</li>
+</ol>
+<p>JVM要求以上八个动作必须是原子性的，但是对于64位的数据类型（long、double）有些非原子协议。说明在执行以上八个动作时，可能会出现只读取或写入了半个long或double，因此出现错误。</p>
+<p>如何避免出现上述错误？</p>
+<ul>
+<li>商用JVM已经充分考虑了此问题，不需要我们操作。</li>
+<li>可以通过volatile避免读取半个数据的问题。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（一）类的生命周期" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">JVM（一）类的生命周期</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="archive-article-date">
+  	<time datetime="2021-10-19T05:36:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是JVM"><a href="#什么是JVM" class="headerlink" title="什么是JVM?"></a>什么是JVM?</h2><p>​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上的目标代码（字节码），就可以在多种平台上不加修改地运行（一次编译，处处运行）。</p>
+<h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p>​        生命周期：加载-&gt;连接-&gt;初始化-&gt;使用-&gt;卸载</p>
+<ul>
+<li><p>加载</p>
+<p>查找并加载类的二进制数据（class文件），将硬盘上的class文件加载到JJVM内存中。</p>
+</li>
+<li><p>连接</p>
+<p>确定类与类之间的关系，连接阶段有三个子阶段分别是：验证，准备，解析。</p>
+<ul>
+<li>验证：校验.class文件的正确性。</li>
+<li>准备：为static静态变量分配内存，并初始化默认值，普通变量暂时不做处理。在准备阶段，JVM中只有类，没有对象。</li>
+<li>解析：把类中的符号引用（全类名，如”org.ysmir.entity.Student“），转为直接引用（内存地址）。</li>
+</ul>
+</li>
+<li><p>初始化</p>
+<p>为static静态变量赋予正确的值。</p>
+</li>
+<li><p>使用</p>
+<p>对象的初始化、垃圾回收、销毁。</p>
+</li>
+<li><p>卸载</p>
+<p>当类使用完后，类就会进入卸载阶段。衡量标准为：</p>
+<ol>
+<li>改类的所有实例都已被回收，也就是堆中不存在该类的任何实例。</li>
+<li>加载该类的ClassLoader都已被回收。</li>
+<li>该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+</ol>
+</li>
+</ul>
+<h2 id="JVM结束生命周期的时机"><a href="#JVM结束生命周期的时机" class="headerlink" title="JVM结束生命周期的时机"></a>JVM结束生命周期的时机</h2><ul>
+<li>正常结束（卸载阶段）</li>
+<li>异常结束（Exception）/错误（Error）</li>
+<li>System.exit()</li>
+<li>操作系统异常</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-SQL优化（六）锁机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -277,118 +489,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-java多线程基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/14/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/">java多线程基础</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/14/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" class="archive-article-date">
-  	<time datetime="2021-10-14T03:42:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="进程与线程的基本概念"><a href="#进程与线程的基本概念" class="headerlink" title="进程与线程的基本概念"></a>进程与线程的基本概念</h2><ul>
-<li>进程：进程是程序运行资源分配的最小单位，计算机读取磁盘上的一个应用程序，加载到内存中运行，即启动了一个进程。进程共分为系统进程和用户进程两种。</li>
-<li>线程：线程是CPU调度的最小单位，必须依赖于进程而存在，也可以说进程的程序运行实际上是由众多线程实际完成的。</li>
-</ul>
-<h3 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h3><ul>
-<li><p>并发：在一定时间内，应用程序能够交替执行不同的任务。</p>
-</li>
-<li><p>并行：在同一时间内，应用程序能够同时执行不同的任务，一个CPU有几个核心，就可以同时执行几条命令。</p>
-</li>
-<li><p>并发与并行的区别：并发是交替执行，并行是同时执行。</p>
-</li>
-<li><p>并发编程的意义、作用</p>
-<ul>
-<li>充分利用CPU资源</li>
-<li>加快响应用户的时间</li>
-<li>可以使代码模块化，异步化，简单化</li>
-</ul>
-</li>
-<li><p>并发编程注意事项</p>
-<ul>
-<li>线程共享资源时的安全性</li>
-<li>线程之间的死锁</li>
-<li>线程过多将服务器资源耗尽形成死锁宕机</li>
-</ul>
-</li>
-</ul>
-<h2 id="实现线程的方式"><a href="#实现线程的方式" class="headerlink" title="实现线程的方式"></a>实现线程的方式</h2><ul>
-<li><p>实现runable接口</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;通过runable接口实现的线程&quot;</span>);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br><span class="line">thread.start();</span><br></pre></td></tr></table></figure></li>
-<li><p>继承Thread类，重写run()方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;通过继承Thread类，重写run()方法实现的线程&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Thread thread = <span class="keyword">new</span> MyThread();</span><br><span class="line">        thread.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>实现callable接口</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FutureTask&lt;String&gt; futureTask = <span class="keyword">new</span> FutureTask&lt;String&gt;(<span class="keyword">new</span> Callable&lt;String&gt;()&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;通过callable接口实现的线程&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello world&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br><span class="line">Thread thread = <span class="keyword">new</span> Thread(futureTask);</span><br><span class="line"></span><br><span class="line">thread.start();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">//接受call()方法的返回值</span></span><br><span class="line">    String result = futureTask.get();</span><br><span class="line">    System.out.println(result);</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="callable、runable和Thread"><a href="#callable、runable和Thread" class="headerlink" title="callable、runable和Thread"></a>callable、runable和Thread</h3><ul>
-<li>callable接口的核心时call方法，允许返回值，runable接口的核心是run方法，没有返回值</li>
-<li>call方法可以抛出异常，run方法不行</li>
-<li>callable和runable都可应用于executors，而thread类只支持runable</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">多线程基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/14/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/">展开全文 >></a>
         </p>
       
 
@@ -1215,90 +1315,6 @@
 
 
   
-    <article id="post-二十三种设计模式（二十四）Interpreter解析器模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/">二十三种设计模式（二十四）Interpreter 解析器模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，如果某一特定领域的问题比较复杂，类似的结构不断重复出现，如果使用普通的编程方式来实现 将面临非常频繁的变化。在这种情况下，将特定领域的问题表达为某种语法规则下的句子，然后构建一个解释器来解释这样的句子，从而达到解决问题的目的。</p>
-<p>Interpreter（解释器模式）：给定一个语言，定义它的文法的一种表示，并定义一种解释器，这个解释器使用该表示来解释语言中的句子。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Expression</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String,Integer&gt; <span class="keyword">var</span>)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VarExpression</span> <span class="keyword">implements</span> <span class="title">Expression</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String key;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">VarExpression</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.key=key;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String, Integer&gt; <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">var</span>.get(<span class="keyword">this</span>.key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">SymbolExpression</span> <span class="keyword">implements</span> <span class="title">Expression</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> Expression left;</span><br><span class="line">    <span class="keyword">protected</span> Expression right;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SymbolExpression</span><span class="params">(Expression left,Expression right)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.left=left;</span><br><span class="line">        <span class="keyword">this</span>.right=right;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AddExpression</span> <span class="keyword">extends</span> <span class="title">SymbolExpression</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AddExpression</span><span class="params">(Expression left, Expression right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(left, right);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String, Integer&gt; <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="keyword">super</span>.left.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">int</span> right = <span class="keyword">super</span>.right.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">return</span> left+right;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SubExpression</span> <span class="keyword">extends</span> <span class="title">SymbolExpression</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SubExpression</span><span class="params">(Expression left, Expression right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(left, right);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String, Integer&gt; <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="keyword">super</span>.left.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">int</span> right = <span class="keyword">super</span>.right.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">return</span> left-right;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Calculator</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Expression expression;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Calculator</span><span class="params">(String expStr)</span> </span>&#123;</span><br><span class="line">        Stack&lt;Expression&gt; stack = <span class="keyword">new</span> Stack&lt;Expression&gt;();</span><br><span class="line">        <span class="keyword">char</span>[] charArray = expStr.toCharArray();</span><br><span class="line">        Expression left = <span class="keyword">null</span>;</span><br><span class="line">        Expression right = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; charArray.length; i++) &#123;</span><br><span class="line">            <span class="keyword">switch</span> (charArray[i]) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;+&#x27;</span>:</span><br><span class="line">                    left=stack.pop();</span><br><span class="line">                    right = <span class="keyword">new</span> VarExpression(String.valueOf(charArray[++i]));</span><br><span class="line">                    stack.push(<span class="keyword">new</span> AddExpression(left,right));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;-&#x27;</span>:</span><br><span class="line">                    left=stack.pop();</span><br><span class="line">                    right = <span class="keyword">new</span> VarExpression(String.valueOf(charArray[++i]));</span><br><span class="line">                    stack.push(<span class="keyword">new</span> SubExpression(left,right));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    stack.push(<span class="keyword">new</span> VarExpression(String.valueOf(charArray[i])));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.expression=stack.pop();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">run</span><span class="params">(HashMap&lt;String,Integer&gt; <span class="keyword">var</span>)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.expression.interpreter(<span class="keyword">var</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String expStr=<span class="string">&quot;1+2+3-1-2-3&quot;</span>;</span><br><span class="line">        HashMap&lt;String,Integer&gt; map = <span class="keyword">new</span> HashMap&lt;String,Integer&gt;();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">char</span> ch:expStr.toCharArray())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(ch!=<span class="string">&#x27;+&#x27;</span>&amp;&amp;ch!=<span class="string">&#x27;-&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                map.put(String.valueOf(ch),Integer.valueOf(ch));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        Calculator calculator = <span class="keyword">new</span> Calculator(expStr);</span><br><span class="line"></span><br><span class="line">        System.out.println(calculator.run(map));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/Interpreter.png" alt="解析器模式" title="解析器模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>Interpreter模式的应用场合是Interpreter模式应用的难点，只有满足“业务规则频繁变化，其变化的结构不断重复出现，并且容易抽象为语法规则的问题”才适合使用Interpreter模式。</li>
-<li>使用Interpreter模式来表示文法规则，从而可以使用面向对象技巧来方便地“扩展”文法。</li>
-<li>Interpreter模式比较适合简单的文法表示，对于复杂的文法表示，Interpreter模式会产生比较大的类层次结构，需要求助于语法分析生成器这样的标准工具。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1396,19 +1412,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">多线程基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
               </li>
             
             <div class="clearfix"></div>

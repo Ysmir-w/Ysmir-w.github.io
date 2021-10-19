@@ -6,15 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: 多线程基础 | Ysmir的博客</title>
+  <title>JVM（二）JAVA内存模型（Java Memory Model，简称JMM） | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Ysmir的博客">
-<meta property="og:url" content="http://example.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/index.html">
+  <meta name="description" content="JMMJMM主要用于定义变量的访问规则（所有线程的共享变量，不能是局部变量），它将内存划分为两个区域：主内存区，工作内存区   主内存区：真实存放变量 工作内存：存放各个变量的副本，供各个线程所使用。  各个线程不能直接访问主内存，也不能访问其他线程的工作内存，只能访问自己私有的工作内存，通过主内存间接的访问其他线程的工作内存，这是高并发下数据不安全的根本原因。 如果线程B修改了变量i的值，线程A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM（二）JAVA内存模型（Java Memory Model，简称JMM）">
+<meta property="og:url" content="http://example.com/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/index.html">
 <meta property="og:site_name" content="Ysmir的博客">
+<meta property="og:description" content="JMMJMM主要用于定义变量的访问规则（所有线程的共享变量，不能是局部变量），它将内存划分为两个区域：主内存区，工作内存区   主内存区：真实存放变量 工作内存：存放各个变量的副本，供各个线程所使用。  各个线程不能直接访问主内存，也不能访问其他线程的工作内存，只能访问自己私有的工作内存，通过主内存间接的访问其他线程的工作内存，这是高并发下数据不安全的根本原因。 如果线程B修改了变量i的值，线程A">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/JMM.png">
+<meta property="article:published_time" content="2021-10-19T11:34:00.000Z">
+<meta property="article:modified_time" content="2021-10-19T13:05:54.972Z">
 <meta property="article:author" content="Ysmir">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/JMM.png">
   
     <link rel="alternative" href="/atom.xml" title="Ysmir的博客" type="application/atom+xml">
   
@@ -150,60 +157,197 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-JVM（二）JAVA内存模型（Java-Memory-Model，简称JMM）" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/14/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" class="archive-article-date">
-  	<time datetime="2021-10-14T03:42:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-14</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/14/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/">java多线程基础</a>
+    <h1 class="article-title" itemprop="name">
+      JVM（二）JAVA内存模型（Java Memory Model，简称JMM）
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" class="archive-article-date">
+  	<time datetime="2021-10-19T11:34:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h2><p>JMM主要用于定义变量的访问规则（所有线程的共享变量，不能是局部变量），它将内存划分为两个区域：主内存区，工作内存区</p>
+<p><img src="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/JMM.png" alt="JMM" title="JMM"></p>
+<ul>
+<li>主内存区：真实存放变量</li>
+<li>工作内存：存放各个变量的副本，供各个线程所使用。</li>
+</ul>
+<p>各个线程不能直接访问主内存，也不能访问其他线程的工作内存，只能访问自己私有的工作内存，通过主内存间接的访问其他线程的工作内存，这是高并发下数据不安全的根本原因。</p>
+<p>如果线程B修改了变量i的值，线程A如何才能获取到线程B修改后的值？</p>
+<ol>
+<li>线程B将数据同步到主内存——Save</li>
+<li>线程A获取主内存中最新的数据——Load</li>
+</ol>
+<h4 id="不同线程交换数据时经历的步骤"><a href="#不同线程交换数据时经历的步骤" class="headerlink" title="不同线程交换数据时经历的步骤"></a>不同线程交换数据时经历的步骤</h4><ol>
+<li>Lock:将主内存中的变量，标识为一条线程的独占状态</li>
+<li>Read:将主内存中的变量读取或拷贝到工作内存中。</li>
+<li>Load:将2中读取的变量拷贝到变量的副本中。</li>
+<li>Use:将工作内存中的变量副本传递给线程使用。</li>
+</ol>
+<hr>
+<ol start="5">
+<li>Assign:把线程正在使用的变量，传递给工作内存中的变量副本中。</li>
+<li>Store:将工作内存中变量副本的值，传递到主内存中。</li>
+<li>Write:将6中传过来的变量副本的值作为一个主内存中的变量进行存储。</li>
+<li>Unlock:解除线程的独占状态。</li>
+</ol>
+<p>JVM要求以上八个动作必须是原子性的，但是对于64位的数据类型（long、double）有些非原子协议。说明在执行以上八个动作时，可能会出现只读取或写入了半个long或double，因此出现错误。</p>
+<p>如何避免出现上述错误？</p>
+<ul>
+<li>商用JVM已经充分考虑了此问题，不需要我们操作。</li>
+<li>可以通过volatile避免读取半个数据的问题。</li>
+</ul>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">多线程基础</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JVM（一）类的生命周期</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -226,9 +370,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
@@ -296,19 +440,19 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">JVM</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">多线程基础</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
               </li>
             
             <div class="clearfix"></div>
