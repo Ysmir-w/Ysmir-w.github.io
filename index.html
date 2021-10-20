@@ -152,6 +152,221 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JVM（四）JVM运行时的内存区域" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/20/JVM%EF%BC%88%E5%9B%9B%EF%BC%89JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">JVM（四）JVM运行时的内存区域</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/20/JVM%EF%BC%88%E5%9B%9B%EF%BC%89JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" class="archive-article-date">
+  	<time datetime="2021-10-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>JVM在运行时，将内存划分为五个部分，分别为：</p>
+<ul>
+<li>线程私有（对于JMM中的工作内存）<ul>
+<li>虚拟机栈VM Stack</li>
+<li>本地方法栈 Native Method Stack</li>
+<li>程序计数器 Program Counter Register</li>
+</ul>
+</li>
+<li>线程共享（对于JVM中的主内存）<ul>
+<li>方法区Method Area</li>
+<li>堆Heap</li>
+</ul>
+</li>
+</ul>
+<h3 id="程序计数器（Program-Counter-Register）"><a href="#程序计数器（Program-Counter-Register）" class="headerlink" title="程序计数器（Program Counter Register）"></a>程序计数器（Program Counter Register）</h3><p>行号指示器，指向当前线程所执行的字节码指令地址，可以理解为class文件中的行号。注意，一般情况下，程序计数器可以理解为行号，但如果执行的是native方法，则程序计数器的值为undefined；程序计数器是唯一不会出现”内存溢出“情况的区域。</p>
+<h3 id="虚拟机栈（VM-Stack"><a href="#虚拟机栈（VM-Stack" class="headerlink" title="虚拟机栈（VM Stack)"></a>虚拟机栈（VM Stack)</h3><p>定义：方法执行的内存模型</p>
+<ul>
+<li>方法在执行的同时，会在虚拟机栈中创建一个栈帧</li>
+<li>栈帧中包含：方法的局部变量表（可以存放基本数据类型和引用数据类型），操作数据栈，动态链接（符号引用会在实际执行时，转化为不同的地址。因此转换的行为会在每一次运行时都发生一次），方法出口信息等。</li>
+<li>当虚拟机栈中的栈帧太多时会出现内存溢出。</li>
+</ul>
+<h3 id="本地方法栈（Native-Method-Stack）"><a href="#本地方法栈（Native-Method-Stack）" class="headerlink" title="本地方法栈（Native Method Stack）"></a>本地方法栈（Native Method Stack）</h3><p>原理和结构与虚拟机栈一致，不同点：虚拟机栈中存放的是jdk或我们自己编写的方法，而本地方法栈调用的是操作系统底层的方法。</p>
+<h3 id="堆（Heap）"><a href="#堆（Heap）" class="headerlink" title="堆（Heap）"></a>堆（Heap）</h3><ul>
+<li>堆中存放对象的实例（数组属于对象）。</li>
+<li>堆是JVM中最大的一块空间，在JVM中启动时就已经创建完毕。</li>
+<li>堆是垃圾回收器GC主要管理的区域</li>
+<li>堆本身是线程共享，但可以在堆内部划分出多个线程私有的缓冲区</li>
+<li>堆允许物理空间不连续，只要逻辑连续即可</li>
+<li>堆可以分为新时代以及老生代，大小比例为一比二。<ul>
+<li>新生代包含eden，s0,s1空间，其中s0和s1又被称为survivor，s0被称为from survivor，s1被称为to survivor，比例为8:1:1。</li>
+<li>新生代的使用率一般在90%。在使用时，只能使用一个eden和一块s区间（s0或s1)。因为新生代底层使用的是复制算法，为了避免碎片的产生。</li>
+<li>新生代一般存放生命周期比较短或比较小的对象，老生代反之。</li>
+<li>对象的大小可以通过虚拟机参数来设置 -XX: PretenureSizeThreshold。一般而言，大对象一般是集合，数组，字符串。</li>
+<li>新生代、老生代的年龄：MinorGC回收新生代中的对象。如果Eden区中的对象在一次回收后仍然存活，就会被转移到S区中；之后，如果MinorGC再次回收，已经在s区中的对象仍然存活，则年龄+1。如果年龄增长到一定的数字（默认为16），则对象会被转移到老生代中。</li>
+<li>老生代使用的垃圾回收器为MajorGC\FullGC。</li>
+<li>新生代特点：<ul>
+<li>大部分对象都存在于新生代</li>
+<li>新生代的回收频率高、效率高</li>
+</ul>
+</li>
+<li>老生代特点：<ul>
+<li>空间大</li>
+<li>增长速度慢</li>
+<li>回收频率低</li>
+</ul>
+</li>
+<li>划分新生代与老生代的意义为，可以根据项目中对象大小的数量，设置新生代或老生代的空间容量，从而提高GC的性能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="方法区（Method-Area）"><a href="#方法区（Method-Area）" class="headerlink" title="方法区（Method Area）"></a>方法区（Method Area）</h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/20/JVM%EF%BC%88%E5%9B%9B%EF%BC%89JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（三）volatile关键字" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/">JVM（三）volatile关键字</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/" class="archive-article-date">
+  	<time datetime="2021-10-19T12:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><p>概念：JVM提供的一个轻量级的同步机制</p>
+<p>作用：</p>
+<ul>
+<li><p>防止JVM对long/double等64位的非原子行协议进行误操作（读取半个数据）。</p>
+</li>
+<li><p>可以使变量对所有线程立即可见（某一个线程如果修改了工作内存中的变量副本，那么加上volatile之后，该变量就会立刻同步到其他线程的工作内存中）。</p>
+</li>
+<li><p>禁止指令的重排序（reorder）优化。重排序：为了提高执行效率，将非原子性的操作拆分成原子性操作，再进行二次排序。重排序不会影响<strong>单线程</strong>的执行结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">num=<span class="number">10</span>;			<span class="comment">//原子性操作，不可再拆</span></span><br><span class="line"><span class="keyword">int</span> num=<span class="number">10</span>;		<span class="comment">//非原子性操作，可以拆分为int num; num=10;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>volatile通过“内存屏障”防止重排序问题：</p>
+<ul>
+<li>在volatile写操作前，插入StoreStore屏障</li>
+<li>在volatile写操作后，插入StoreLoad屏障</li>
+<li>在volatile读操作前，插入LoadLoad屏障</li>
+<li>在volatile读操作后，插入LoadStore屏障</li>
+</ul>
+</li>
+</ul>
+<p><em><strong>volatile</strong></em>不能保证原子性、不能保证线程安全。要想保证原子性/线程安全，可以使用原子包java.util.concrent.aotmic中的类，该类能保证原子性，是因为提供了compareAndSet()方法，该方法提供了CAS算法（无锁算法）。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-JVM（二）JAVA内存模型（Java-Memory-Model，简称JMM）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1084,208 +1299,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SQL优化（一）MYSQL分层，存储引擎" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">SQL优化（一）MYSQL分层，存储引擎</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
-  	<time datetime="2021-10-08T12:31:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="MySQL分为四层："><a href="#MySQL分为四层：" class="headerlink" title="MySQL分为四层："></a>MySQL分为四层：</h3><ul>
-<li>连接层<ul>
-<li>提供与客户端的连接的服务</li>
-</ul>
-</li>
-<li>服务层<ul>
-<li>提供各种用户使用的接口</li>
-<li>提供SQL优化器（MySQL QUery Optimizer)</li>
-</ul>
-</li>
-<li>引擎层<ul>
-<li>提过了各种存储数据的方式（InnoDB MyISAM等)</li>
-<li>InnoDB使用行锁，注重于事务，性能低，适用于高并发，MySQL默认</li>
-<li>MyISAM使用表锁，性能有限</li>
-</ul>
-</li>
-<li>存储层<ul>
-<li>存储数据</li>
-</ul>
-</li>
-</ul>
-<p>查看数据库引擎命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show engines;</span><br></pre></td></tr></table></figure>
-
-<p>查看当前默认引擎命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%storage_engine%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p>指定数据库对象引擎命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create table tb(</span><br><span class="line">	........</span><br><span class="line">)EnGINE=MyISAM;</span><br></pre></td></tr></table></figure>
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89MYSQL%E5%88%86%E5%B1%82%EF%BC%8C%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（二十五）总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%94%EF%BC%89%E6%80%BB%E7%BB%93/">二十三种设计模式（二十五）总结</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%94%EF%BC%89%E6%80%BB%E7%BB%93/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>设计模式的目标：管理变化，提高复用。</p>
-<p>什么时候不用模式？</p>
-<ul>
-<li>代码可读性很差时</li>
-<li>需求理解还很浅时</li>
-<li>变化没有显现时</li>
-<li>不是系统的关键依赖点</li>
-<li>项目没有复用价值时</li>
-<li>项目将要发布时</li>
-</ul>
-<p>设计模式经验：</p>
-<ul>
-<li>不要为模式而模式</li>
-<li>关注抽象类&amp;接口</li>
-<li>理清变化点和稳定点</li>
-<li>审视依赖关系</li>
-<li>要有Framework和Application的区隔思维</li>
-<li>良好的设计是演化的结果</li>
-</ul>
-<p>设计模式成长之路：</p>
-<ul>
-<li>“手中无剑，心中无剑”：见模式而不知</li>
-<li>“手中有剑，心中无剑”：可以识别模式，作为应用开发人员使用模式。</li>
-<li>”手中有剑，心中有剑“：作为框架开发人员为应用设计某些模式。</li>
-<li>”手中无剑，心中有剑“：忘掉模式，只有原则。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%94%EF%BC%89%E6%80%BB%E7%BB%93/">展开全文 >></a>
         </p>
       
 
