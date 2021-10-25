@@ -152,6 +152,387 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JVM（八）双亲委派" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/24/JVM%EF%BC%88%E5%85%AB%EF%BC%89%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/">JVM（八）双亲委派</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/24/JVM%EF%BC%88%E5%85%AB%EF%BC%89%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/" class="archive-article-date">
+  	<time datetime="2021-10-24T11:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="双亲委派"><a href="#双亲委派" class="headerlink" title="双亲委派"></a>双亲委派</h2><p>双亲：</p>
+<ul>
+<li>JVM自带的加载器（在JVM的内部所包含，C++）<ul>
+<li>根加载器，Bootstrap：加载jre目录下\lib\rt.jar（包含了平时编写代码时大部分jdk api）中的类。也可以指定加载某一个jar(-XBootclasspath=xxx.jar)</li>
+<li>扩展类加载器，Extension：加载jre\lib\ext中的jar;指定加载(-Djava.ext.dirs=……)</li>
+<li>APP/SystemClassLoader，应用加载器（系统加载器）：加载classpath中的jar;指定加载:(-Djava.class.path=类/jar)</li>
+</ul>
+</li>
+<li>用户定义的加载器（Java）<ul>
+<li>java.lang.ClassLoader的子类</li>
+</ul>
+</li>
+</ul>
+<p>委派：</p>
+<p><img src="/2021/10/24/JVM%EF%BC%88%E5%85%AB%EF%BC%89%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE.png" alt="双亲委派"></p>
+<p>当一个类的加载器加载类的时候，自己先不加载，而是逐层向上交由双亲去加载，当双亲中的某一个加载器加载成功后，再向下返回成功。如果所有的双亲和自己都无法加载，则抛出异常。</p>
+<p>定义类加载器：最终实际加载类的加载器</p>
+<p>初始化加载器：直接面对加载任务的类</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/24/JVM%EF%BC%88%E5%85%AB%EF%BC%89%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（七）四种引用级别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/22/JVM%EF%BC%88%E4%B8%83%EF%BC%89%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%BA%A7%E5%88%AB/">JVM（七）四种引用级别</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/22/JVM%EF%BC%88%E4%B8%83%EF%BC%89%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%BA%A7%E5%88%AB/" class="archive-article-date">
+  	<time datetime="2021-10-22T11:44:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>根据引用的强弱关系，可以分为四种引用。</p>
+<h2 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约定在本例中，等号左边称为引用，等号右边称为引用对象</span></span><br><span class="line">Object obj = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure>
+
+<p>强引用失效的时机：</p>
+<ul>
+<li><p>生命周期结束（作用域结束）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//当方法执行完毕后，强引用指向的对象new Objcet()就会等待被垃圾回收器GC回收</span></span><br></pre></td></tr></table></figure></li>
+<li><p>引用被置为null，引用对象就会被GC回收</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">obj = <span class="keyword">null</span>;<span class="comment">//此时没有任何引用指向new Object()，因此，new Objcet()就会被等待GC回收</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>除了以上两个情况以外，其他任何时候GC都不会回收强引用对象，即使JVM内存溢出。</p>
+<h2 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h2><p>根据JVM内存的情况：如果内存充足，GC不会随便的回收软引用对象；如果JVM内存不足，则GC就会主动的回收软引用对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SoftObject</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoftReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SoftReference&lt;SoftObject&gt; softReference = <span class="keyword">new</span> SoftReference&lt;&gt;(<span class="keyword">new</span> SoftObject());</span><br><span class="line">        List&lt;<span class="keyword">byte</span>[]&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//开启一个线程监听，是否有软引用已被回收</span></span><br><span class="line">        <span class="comment">//softReference.get()为软引用指向的对象本身</span></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (softReference.get() == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;软引用对象已经被回收&quot;</span>);</span><br><span class="line">                    System.exit(<span class="number">0</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//不断往集合中存数据，模拟内存不足</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">10</span>);</span><br><span class="line">                list.add(<span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>*<span class="number">1024</span>]);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h2><p>只要GC执行，就会将弱引用对象进行回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    WeakReference&lt;Object&gt; weakReference = <span class="keyword">new</span> WeakReference&lt;&gt;(<span class="keyword">new</span> Object());</span><br><span class="line">    System.out.println(weakReference.get()==<span class="keyword">null</span>?<span class="string">&quot;已被回收&quot;</span>:<span class="string">&quot;未被回收&quot;</span>);</span><br><span class="line">    System.gc();<span class="comment">//建议GC执行一次回收（存在概率）</span></span><br><span class="line">    System.out.println(weakReference.get()==<span class="keyword">null</span>?<span class="string">&quot;已被回收&quot;</span>:<span class="string">&quot;未被回收&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果为：</p>
+<blockquote>
+<p>未被回收<br>已被回收</p>
+</blockquote>
+<h2 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h2><p>虚引用也被称为幻影引用或幽灵引用。</p>
+<p>是否使用了虚引用，和引用对象本身没有任何关系；无法通过虚引用来获取对象本身。虚引用的get()方法返回值默认为null。</p>
+<p>虚引用一般不会单独使用，一般会和引用队列（java.lang.ref.ReferenceQueue）一起使用。</p>
+<p>价值：当GC回收一个对象时，如果GC发现此对象还有一个虚引用，就会将虚引用放入到引用队列中，当虚引用出队后，再去回收该对象。因此我们可以使用虚引用和引用队列，在对象被GC之前，进行一些额外的其他操作。</p>
+<p>GC-&gt;如果有虚引用-&gt;虚引用入队-&gt;虚引用出队-&gt;回收对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyObject</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PhantomReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        MyObject obj = <span class="keyword">new</span> MyObject();</span><br><span class="line">        ReferenceQueue referenceQueue = <span class="keyword">new</span> ReferenceQueue();</span><br><span class="line">        <span class="comment">//虚引用需要和引用队列一起使用</span></span><br><span class="line">        PhantomReference&lt;MyObject&gt; phantomReference = <span class="keyword">new</span> PhantomReference&lt;&gt;(obj,referenceQueue);</span><br><span class="line"></span><br><span class="line">        System.out.println(referenceQueue.poll());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//让GC执行一次回收操作</span></span><br><span class="line">        obj=<span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(<span class="string">&quot;GC执行了&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//GC-&gt;虚引用-&gt;入队-&gt;出队-&gt;obj</span></span><br><span class="line">        System.out.println(referenceQueue.poll());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>null<br>GC执行了<br>java.lang.ref.PhantomReference@1b6d3586</p>
+</blockquote>
+<p>注意，如果虚引用对象重写了finalize()，则JVM会延迟虚引用的入队时间。</p>
+<h2 id="最终引用"><a href="#最终引用" class="headerlink" title="最终引用"></a>最终引用</h2><p>相当于C++中的析构函数，在java中存在Finalizer，可以帮我们自动回收一些不需要的对象，因此在java中不需要写析构函数。</p>
+<h2 id="各个引用的出处"><a href="#各个引用的出处" class="headerlink" title="各个引用的出处"></a>各个引用的出处</h2><ul>
+<li>强引用：new</li>
+<li>软引用：java.lang.ref.SoftReference</li>
+<li>弱引用：java.lang.ref.WeakReference</li>
+<li>虚引用：java.lang.ref.PhantomReference</li>
+<li>最终引用：java.lang.ref.FianlReference</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/22/JVM%EF%BC%88%E4%B8%83%EF%BC%89%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%BA%A7%E5%88%AB/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（六）助记符" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/22/JVM%EF%BC%88%E5%85%AD%EF%BC%89%E5%8A%A9%E8%AE%B0%E7%AC%A6/">JVM（六）助记符</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/22/JVM%EF%BC%88%E5%85%AD%EF%BC%89%E5%8A%A9%E8%AE%B0%E7%AC%A6/" class="archive-article-date">
+  	<time datetime="2021-10-22T11:20:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>java 反编译命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -c xxx.class</span><br></pre></td></tr></table></figure>
+
+<p>常见助记符：</p>
+<p>aload_0:局部变量表中的第0个变量装载了一个引用类型数据</p>
+<p>iload:装载了一个int类型数据</p>
+<p>invokespecial: init,private,super.method():&lt;init&gt;初始化代码存放的位至</p>
+<p>getstatic:获取静态成员</p>
+<p>bipush:如果整数范围为-128-127之内为bipush（8位带符号整数），放至栈顶</p>
+<p>sipush:如果整数范围为&gt;127(16位带符号整数)为bipush，放至栈顶</p>
+<p>注意：无论定义int或short等，只要在-128-127内，就是bipush，如果是&gt;127，则是sipush。在-128-127中有些特殊情况，如0-5分别为iconst_x，-1是iconst_m1</p>
+<p>ldc: int float String 常量，放至栈顶</p>
+<p>ldc2_w:long double 常量，放至栈顶</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/22/JVM%EF%BC%88%E5%85%AD%EF%BC%89%E5%8A%A9%E8%AE%B0%E7%AC%A6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（五）类的使用方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/21/JVM%EF%BC%88%E4%BA%94%EF%BC%89%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/">JVM（五）类的使用方式</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/21/JVM%EF%BC%88%E4%BA%94%EF%BC%89%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2021-10-21T08:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-21</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>类的初始化：JVM只会在”首次主动使用“一个类/接口时，才会初始化它们。</p>
+<h2 id="主动使用"><a href="#主动使用" class="headerlink" title="主动使用"></a>主动使用</h2><ol>
+<li>new 构造器类的使用</li>
+<li>访问类/接口的静态成员</li>
+<li>使用Class.forName(“ “)反射时使用的类</li>
+<li>初始化一个子类时，该子类的父类也会被初始化</li>
+<li>动态语言在执行时所涉及的类也会被初始化（多见于动态代理）</li>
+</ol>
+<p>特殊情况：</p>
+<ul>
+<li>如果成员是常量，则该常量不会初始化。</li>
+<li>如果常量是一个随机数，会被初始化（为了安全）</li>
+</ul>
+<h2 id="被动使用"><a href="#被动使用" class="headerlink" title="被动使用"></a>被动使用</h2><p>除了主动使用，其他都是被动使用。</p>
+<p>实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span></span>&#123;</span><br><span class="line">    Test[] testArray = <span class="keyword">new</span> Test[];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化数组不属于主动使用，因此Test类中的静态代码块并不会执行，Test类不会被初始化。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/21/JVM%EF%BC%88%E4%BA%94%EF%BC%89%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-JVM（四）JVM运行时的内存区域" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -165,7 +546,7 @@
 
         
         <a href="/2021/10/20/JVM%EF%BC%88%E5%9B%9B%EF%BC%89JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" class="archive-article-date">
-  	<time datetime="2021-10-19T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-20</time>
+  	<time datetime="2021-10-20T08:39:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-20</time>
 </a>
         
       </header>
@@ -222,7 +603,10 @@
 </ul>
 </li>
 </ul>
-<h3 id="方法区（Method-Area）"><a href="#方法区（Method-Area）" class="headerlink" title="方法区（Method Area）"></a>方法区（Method Area）</h3>
+<h3 id="方法区（Method-Area）"><a href="#方法区（Method-Area）" class="headerlink" title="方法区（Method Area）"></a>方法区（Method Area）</h3><p>方法区存放类的元数据、常量池、方法信息（方法数据、方法代码）。垃圾回收器GC回收类的元数据和常量池。如果方法区中的数据太多，会出现内存溢出异常。</p>
+<p>常量池：存放编译期间产生的字面量（字符串等）、符号引用。</p>
+<p>注意事项：导致内存溢出的异常，除了虚拟机中的四个区域以外，还可能是直接内存。在NIO（非阻塞IO）技术中会使用到直接内存。</p>
+
       
 
       
@@ -812,522 +1196,6 @@
 
 
   
-    <article id="post-Stream流操作分类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/12/Stream%E6%B5%81%E6%93%8D%E4%BD%9C%E5%88%86%E7%B1%BB/">Stream流操作分类</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/12/Stream%E6%B5%81%E6%93%8D%E4%BD%9C%E5%88%86%E7%B1%BB/" class="archive-article-date">
-  	<time datetime="2021-10-12T06:05:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="中间操作："><a href="#中间操作：" class="headerlink" title="中间操作："></a>中间操作：</h3><ul>
-<li>无状态(stateless)：unordered() filter() map() mapToInt() mapToLang() mapToDouble() flatMapToInt() flatMaptoLong() flatMapToDouble() peek()</li>
-<li>有状态(stateful)：distinct() sorted() limit() skip()</li>
-</ul>
-<h3 id="终结操作"><a href="#终结操作" class="headerlink" title="终结操作"></a>终结操作</h3><ul>
-<li>非短路操作(not short-circuiting): forEach() forEachOrdered() toArray() reduce() collect() max() min() count()</li>
-<li>短路操作(short-circuiting): anyMatch() allMatch() noneMatch() findFirst() findAny()</li>
-</ul>
-<h3 id="流的常用创建方法："><a href="#流的常用创建方法：" class="headerlink" title="流的常用创建方法："></a>流的常用创建方法：</h3><ul>
-<li><p>使用Collection下的Stream()和parallelStream()方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">list.add(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;bcd&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;efg&quot;</span>);</span><br><span class="line">Stream&lt;String&gt; listStream = list.stream();</span><br><span class="line">Stream&lt;String&gt; listStream2 = list.parallelStream();</span><br><span class="line">listStream.forEach(System.out::println);</span><br><span class="line">listStream2.forEach(System.out::println);</span><br></pre></td></tr></table></figure></li>
-<li><p>使用Arrays中的Stream()方法，将数组转换为流</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Integer[] array = &#123;<span class="number">9</span>,<span class="number">8</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>&#125;;</span><br><span class="line">Stream&lt;Integer&gt; arrayStream = Arrays.stream(array);</span><br><span class="line">arrayStream.forEach(System.out::println);</span><br></pre></td></tr></table></figure></li>
-<li><p>使用Stream中的静态方法，of(),iterate(),generate()</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Integer&gt; stream = <span class="keyword">null</span>;</span><br><span class="line">stream = Stream.of(<span class="number">10</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>);</span><br><span class="line">stream.forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">stream = Stream.iterate(<span class="number">0</span>, (x) -&gt; x + <span class="number">3</span>).limit(<span class="number">3</span>);</span><br><span class="line">stream.forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">stream = Stream.generate(()-&gt;<span class="number">999</span>).limit(<span class="number">3</span>);</span><br><span class="line">stream.forEach(System.out::println);</span><br></pre></td></tr></table></figure></li>
-<li><p>使用BuffferedReader.lines()方法，将每行转换为流</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;String&gt; stream = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        stream = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(<span class="keyword">new</span> FileInputStream(<span class="keyword">new</span> 								File(<span class="string">&quot;C:\\Users\\Ysmir\\Desktop\\新建文本文档.txt&quot;</span>)))).lines();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">stream.forEach((e)-&gt; System.out.println(e));</span><br></pre></td></tr></table></figure></li>
-<li><p>使用Pattern.splitAsStream()方法，将字符串分隔成流</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;String&gt; stream = <span class="keyword">null</span>;</span><br><span class="line">Pattern pattern = Pattern.compile(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">stream = pattern.splitAsStream(<span class="string">&quot;Hello, world;&quot;</span>);</span><br><span class="line">stream.forEach((e)-&gt; System.out.println(e));</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="流的中间操作"><a href="#流的中间操作" class="headerlink" title="流的中间操作"></a>流的中间操作</h3><p>筛选与切片——filter(),limit(),skip(),distint()</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Integer&gt; stream = Stream.of(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">9</span>,<span class="number">8</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>);</span><br><span class="line">stream.filter((x)-&gt; x&gt;<span class="number">2</span>).distinct().skip(<span class="number">1</span>).limit(<span class="number">2</span>).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<p>映射——map(),flatMap()</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;String&gt; stream = Arrays.asList(<span class="string">&quot;a#b#c&quot;</span>, <span class="string">&quot;3#4#5&quot;</span>, <span class="string">&quot;6#7#8&quot;</span>).stream();</span><br><span class="line">stream.map(x -&gt; x.replace(<span class="string">&quot;#&quot;</span>, <span class="string">&quot;*&quot;</span>)).forEach(System.out::println);</span><br><span class="line">stream.flatMap(x-&gt;&#123;</span><br><span class="line">   String[] arg = x.split(<span class="string">&quot;#&quot;</span>);</span><br><span class="line">   <span class="keyword">return</span> Arrays.stream(arg);</span><br><span class="line">&#125;).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<p>排序——sorted()</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Integer&gt; stream = Stream.of(<span class="number">9</span>,<span class="number">8</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>);</span><br><span class="line">stream.sorted().forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<p>消费——peek()</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Integer&gt; stream = Stream.of(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>);</span><br><span class="line">stream.peek((x)-&gt;&#123;</span><br><span class="line">    System.out.println(x);</span><br><span class="line">&#125;).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h3 id="流的终结操作"><a href="#流的终结操作" class="headerlink" title="流的终结操作"></a>流的终结操作</h3><p>匹配、聚合操作</p>
-<ul>
-<li>allMatch:全匹配返回true</li>
-<li>noneMactch:不匹配返回true</li>
-<li>anyMatch:任何一个元素满足条件返回true</li>
-<li>findFirst:返回流中第一个元素</li>
-<li>findAny:返回流中的任意元素</li>
-<li>count:返回流中元素的总个数</li>
-<li>max:返回流中元素最大值</li>
-<li>min:返回流中元素最小值</li>
-</ul>
-<p>规约操作</p>
-<ul>
-<li>reduce:通过流运算，将多次运算结果进行汇总获得结果</li>
-</ul>
-<p>收集操作</p>
-<ul>
-<li>collect:接受一个Collector实例，将流中元素收集成另外一个数据结构。</li>
-<li>Collector工具库:Collectors，用来创建Collector实例对象录入collect</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>中间操作可以获取新的Stream流（设置好运算函数&lt;算法&gt;的Stream流），只有在终结操作执行时中间操作才会被执行。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">java工具类</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/12/Stream%E6%B5%81%E6%93%8D%E4%BD%9C%E5%88%86%E7%B1%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SQL优化（四）SQL优化总结及避免索引失效的原则" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/">SQL优化（四）SQL优化总结及避免索引失效的原则</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/" class="archive-article-date">
-  	<time datetime="2021-10-11T11:57:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="SQL优化总结"><a href="#SQL优化总结" class="headerlink" title="SQL优化总结"></a>SQL优化总结</h3><ul>
-<li><p>单表优化</p>
-<ul>
-<li>最佳左前缀，保持索引的定义和使用的顺序一致性</li>
-<li>索引需要逐步优化</li>
-<li>将含in的范围查询 放到where最后，防止复合索引失效</li>
-</ul>
-</li>
-<li><p>双表优化</p>
-<ul>
-<li>小表驱动大表</li>
-<li>索引建立在经常使用的字段上</li>
-<li>对于左外连接来说，一半给左表加索引，右外连接给右表加索引。</li>
-</ul>
-</li>
-<li><p>三表优化</p>
-<ul>
-<li>小表驱动大表</li>
-<li>索引建立在经常查询的字段上</li>
-</ul>
-</li>
-</ul>
-<h3 id="避免索引失效的原则"><a href="#避免索引失效的原则" class="headerlink" title="避免索引失效的原则"></a>避免索引失效的原则</h3><ul>
-<li>复合索引<ul>
-<li>复合索引不要跨列或无序使用（最佳左前缀）</li>
-<li>复合索引尽量使用全索引匹配</li>
-<li>不能使用不等于(!= &lt;&gt; )或 is null, is not null</li>
-</ul>
-</li>
-<li>不要在索引上进行任何操作<ul>
-<li>计算</li>
-<li>函数</li>
-<li>类型转换等</li>
-</ul>
-</li>
-<li>SQL优化是一种概率层面的优化，不是100%成功。至于是否使用了优化，需要使用explain来验证。</li>
-<li>尽量使用索引覆盖（using index)来避免出现概率件</li>
-<li>like尽量以常量开头，不要以%开头</li>
-<li>尽量不要使用索引覆盖</li>
-</ul>
-<h3 id="其他的一些优化方法"><a href="#其他的一些优化方法" class="headerlink" title="其他的一些优化方法"></a>其他的一些优化方法</h3><h4 id="exists和in："><a href="#exists和in：" class="headerlink" title="exists和in："></a>exists和in：</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">exists</span> (子查询);</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> 字段 <span class="keyword">in</span> (子查询);</span><br></pre></td></tr></table></figure>
-
-<p>如果主查询数据集大，则使用in。</p>
-<p>如果子查询的数据集大，则使用exists。</p>
-<h4 id="order-by优化："><a href="#order-by优化：" class="headerlink" title="order by优化："></a>order by优化：</h4><p>using filesort有两种算法：双路排序、单路排序（根据访问Io的次数区分）</p>
-<p>MySQL4.1之前默认使用双路排序，4.1之后默认使用单路。</p>
-<p>双路排序：扫描两次磁盘，第一次从磁盘读取排序字段，第二次扫描其他字段，在第一次扫描磁盘与第二次扫描磁盘之间会对排序字段进行排序操作（在Buffer中进行）。</p>
-<p>单路排序：只读取一次磁盘，一次读取所有字段，在buffer中进行排序。虽然单路排序减少了访问Io的次数，提升了性能，但单路排序有隐患。如果数据量特别大，则无法将数据一次性读取完毕，会分片读取，单路排序不一定只访问了一次磁盘，有可能进行了多次Io。注意，单路排序比双路排序占用了更多的buffer。单路排序在使用时，如果数据大，可以考虑调大buffer的容量大小。命令为： set max_length_for_sort_data = 1024(单位为字节)</p>
-<p>如果max_length_for_sort_data值太低，MySQL会自动从单路排序切换至双路排序。</p>
-<p>提高order by查询的策略：</p>
-<ul>
-<li>选择使用单路、双路；调整buffer的容量大小</li>
-<li>避免使用select * … </li>
-<li>复合索引不要跨列使用，会出现using filesort</li>
-<li>尽量保证排序字段，排序的一致性（都是升序或降序）</li>
-</ul>
-<h4 id="SQL排查-慢查询日志"><a href="#SQL排查-慢查询日志" class="headerlink" title="SQL排查-慢查询日志"></a>SQL排查-慢查询日志</h4><p>慢查询日志：MySQL提供的一种日志记录，用于记录MySQL中响应时间超过阈值的SQL语句（long_query_time，默认为10秒）</p>
-<p>慢查询日志默认为关闭，建议开发调优是打开，而最终部署时关闭。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*检查是否开启了慢查询日志*/</span></span><br><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%slow_query_log%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*临时开启慢查询日志，退出MySQL(关闭服务)时自动关闭*/</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> show_query_log <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*永久开启慢查询日志</span></span><br><span class="line"><span class="comment">在MySQL配置文件中添加</span></span><br><span class="line"><span class="comment">[mysqld]</span></span><br><span class="line"><span class="comment">slow_query_log=1</span></span><br><span class="line"><span class="comment">slow_query_log_file=日志存放地址</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*临时设置阈值，修改后重新登陆生效*/</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> long_query_time <span class="operator">=</span> <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*永久设置阈值</span></span><br><span class="line"><span class="comment">在MySQL配置文件中添加</span></span><br><span class="line"><span class="comment">[mysqld]</span></span><br><span class="line"><span class="comment">long_query_time=5</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*查看慢SQL*/</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> status <span class="keyword">like</span> <span class="string">&#x27;%slow_queries%&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="通过mysqldumpslow工具查看慢查询日志"><a href="#通过mysqldumpslow工具查看慢查询日志" class="headerlink" title="通过mysqldumpslow工具查看慢查询日志"></a>通过mysqldumpslow工具查看慢查询日志</h4><p>mysqldumpslow工具可以查看慢SQL，可以通过一些过滤条件，快速的查找定义出慢SQL；</p>
-<p>mysqldumpslow –help </p>
-<ul>
-<li>s:排序方式</li>
-<li>r:逆序</li>
-<li>l:锁定时间</li>
-<li>g:正则匹配模式</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/*获取返回记录最多的3个SQL*/</span><br><span class="line">mysqldumpslow -s r -t 3 日志地址</span><br><span class="line">/*获取访问次数最多的3个SQL*/</span><br><span class="line">mysqldumpslow -s c -t 3 日志地址</span><br><span class="line">/*按照时间排序，前10条包含left join查询语句的SQL*/</span><br><span class="line">mysqldumpslow -s t -t 10 -g &quot;left join&quot; 日志地址</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/11/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%9B%9B%EF%BC%89SQL%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93%E5%8F%8A%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E7%9A%84%E5%8E%9F%E5%88%99/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SQL优化（三）Explain中各字段的意义" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/">SQL优化（三）Explain中各字段的意义</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/" class="archive-article-date">
-  	<time datetime="2021-10-10T01:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="id"><a href="#id" class="headerlink" title="id:"></a>id:</h3><ul>
-<li>id为select查询的序列号，表示查询中执行select子句或操作表的顺序。</li>
-<li>当id值相同时，从上往下，顺序执行。</li>
-<li>当id值不同时，id值越大越优先执行</li>
-<li>当id值既有相同值又有不同值时，先执行id大的，然后再从上往下顺序执行。</li>
-</ul>
-<h3 id="select-type"><a href="#select-type" class="headerlink" title="select_type:"></a>select_type:</h3><ul>
-<li><p>PRIMARY：包含子查询SQL中的主查询（最外层查询）</p>
-</li>
-<li><p>SUBQUERY：包含子查询SQL中的子查询（非最外层）</p>
-</li>
-<li><p>SIMPLE：简单查询（不包含子查询，不包含union）</p>
-</li>
-<li><p>DERIVED：衍生查询（在查询时使用了临时表）</p>
-<ul>
-<li><p>在from子查询中只有一张表</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> cname <span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="keyword">in</span>(<span class="number">1</span>,<span class="number">2</span>));</span><br></pre></td></tr></table></figure></li>
-<li><p>在from子查询中，如果有table1 union table2 ，则table 就是derived,table2就是union</p>
- <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> cname <span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="operator">=</span> <span class="number">1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> course <span class="keyword">where</span> tid <span class="operator">=</span> <span class="number">2</span>);</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><p>UNION RESULT:告知开发人员哪些表之间存在union查询</p>
-</li>
-</ul>
-<h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><p>指当前查询查询的表</p>
-<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>索引类型，常用的有system,const,eq_ref,ref,range,index,all等</p>
-<p>其中system,const为理想情况，实际能达到ref,range级别。</p>
-<ul>
-<li><p>system:只有一条数据的系统表（基本达不到，忽略）或衍生表只有一条数据的主查询（偶尔能达到）</p>
-</li>
-<li><p>const:仅仅能查到一条语句，用于primary key 或 unique索引(类型与索引类型有关)</p>
-</li>
-<li><p>eq_ref:唯一性索引，对于每个索引键的查询，返回匹配唯一行数据（有且只有一个，不能多，也不能为0）</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ... <span class="keyword">from</span> <span class="keyword">where</span> name<span class="operator">=</span>....</span><br><span class="line"><span class="comment">/*只返回一条数据，常见于唯一索引和主键索引。*/</span></span><br></pre></td></tr></table></figure></li>
-<li><p>ref:非唯一性索引，对于每个索引键的查询，返回匹配的所有行。</p>
-</li>
-<li><p>range:检索指定范围的数据,where 后面是一个范围查询(between , in  ,&gt; &gt;= &lt; &lt;= ， in有时候会失效，从而转变为all 无索引)</p>
-</li>
-<li><p>index:查询全部索引中的数据</p>
-</li>
-<li><p>all:查询表中的全部数据</p>
-</li>
-</ul>
-<h3 id="possible-keys"><a href="#possible-keys" class="headerlink" title="possible_keys"></a>possible_keys</h3><p>可能用大的索引，是一种预测。</p>
-<h3 id="key"><a href="#key" class="headerlink" title="key"></a>key</h3><p>实际使用到的索引</p>
-<h3 id="key-len"><a href="#key-len" class="headerlink" title="key_len"></a>key_len</h3><p>索引的长度，用于判断复合索引是否完全被使用。</p>
-<h3 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h3><p>指明当前表所参照的字段</p>
-<h3 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h3><p>被索引优化查询的数据个数（实际通过索引查询到的数据个数）</p>
-<h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><h4 id="using-filesort"><a href="#using-filesort" class="headerlink" title="using filesort:"></a>using filesort:</h4><p>性能消耗大；需要“额外”的一次排序（查询）。对于单索引，如果查询和排序是同一字段，则不会出现using filesort，如果排序和查找不是同一字段，会出现。复合索引不能跨列（最佳左前缀），不然会出现using filesort;</p>
-<p>为了避免出现using filesort，单索引应该where 哪些字段，就order by哪些字段。复合索引按照复合索引的顺序使用，不要跨列或者无序使用。</p>
-<h4 id="using-temporar"><a href="#using-temporar" class="headerlink" title="using temporar:"></a>using temporar:</h4><p>性能损耗大，用到了临时表。一般出现在group by语句中。</p>
-<p>解析过程：</p>
-<p>from .. on .. jion .. where .. group by .. having .. select distinct ..order by limit ….</p>
-<h4 id="using-index"><a href="#using-index" class="headerlink" title="using index:"></a>using index:</h4><p>性能提升，索引覆盖（覆盖索引）。原因：此次SQL查询不读取原文件，只从索引中查询数据。（不需要回表查询）。</p>
-<p>如果用到了索引覆盖(using index)，会对possible_keys和key造成影响。</p>
-<ul>
-<li>如果没有where,则索引只出现在key中。</li>
-<li>如果有where,则索引会出现在key和possible_keys中。</li>
-</ul>
-<h4 id="using-where："><a href="#using-where：" class="headerlink" title="using where："></a>using where：</h4><p>需要回表查询</p>
-<h4 id="impossible-where："><a href="#impossible-where：" class="headerlink" title="impossible where："></a>impossible where：</h4><p>where 子句永远为false</p>
-<h4 id="using-join-buffer"><a href="#using-join-buffer" class="headerlink" title="using join buffer:"></a>using join buffer:</h4><p>mysql使用了连接缓存</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/10/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%B8%89%EF%BC%89Explain%E4%B8%AD%E5%90%84%E5%AD%97%E6%AE%B5%E7%9A%84%E6%84%8F%E4%B9%89/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SQL优化（二）SQL解析过程、索引" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/">SQL调优（二）SQL解析过程、索引</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/" class="archive-article-date">
-  	<time datetime="2021-10-09T10:47:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="SQL优化的原因是什么？"><a href="#SQL优化的原因是什么？" class="headerlink" title="SQL优化的原因是什么？"></a>SQL优化的原因是什么？</h3><p>原因：性能低、执行时间长、等待时间太长、SQL语句欠佳（连接查询）、索引失效、服务器设置失效、SQL的编写过程与解析过程不一致等。</p>
-<p>SQL编写过程：</p>
-<p>​    select distinct .. from ..join .. on .. where ..group by ..having ..order by ..limit ..</p>
-<p>SQL解析过程：</p>
-<p>​    from .. on .. join .. where .. group by .. having ..select distinct .. order by  .. limit ..</p>
-<h3 id="SQL优化"><a href="#SQL优化" class="headerlink" title="SQL优化"></a>SQL优化</h3><p>SQL优化，主要是在于优化索引。索引，相当于一本书的目录，索引（index）是帮助mysql高效获取数据的数据结构。索引的数据结构是树，一般采用B树，B+树，哈希树等结构。</p>
-<p>索引虽然可以加速SQL查询的效率（降低IO使用率，降低CPU占用率），然而索引并不是所有的情况都适用，因为索引本身很大，通常存放在硬盘或内存中。而且索引会降低增删改的效率，因为添加索引后，增删改操作不仅需要更改表，还需要更改索引。</p>
-<p>不适用使用索引的情况：</p>
-<ul>
-<li>少量数据</li>
-<li>频繁变更的字段</li>
-<li>很少使用的字段</li>
-</ul>
-<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>索引的分类：</p>
-<ul>
-<li>单值索引：只有一列的索引，一个表可有有多个单值索引。</li>
-<li>唯一索引：唯一索引不能重复。</li>
-<li>复合索引：由多个列构成，相当于书的二级目录。</li>
-<li>主键索引：主键索引不能为空且唯一。</li>
-</ul>
-<p>创建索引：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> 索引类型 索引名 <span class="keyword">on</span> 表(字段);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 索引类型 索引名(字段);</span><br></pre></td></tr></table></figure>
-
-<p>单值索引创建如下：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index 索引名 <span class="keyword">on</span> 表(字段);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 index 索引名(字段);</span><br></pre></td></tr></table></figure>
-
-<p>唯一索引创建如下:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> index 索引名 <span class="keyword">on</span> 表(字段);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> <span class="keyword">unique</span> index 索引名(字段);</span><br></pre></td></tr></table></figure>
-
-<p>复合索引创建如下:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index 索引名 <span class="keyword">on</span> 表(字段,字段.......);</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> index 索引名(字段,字段......)</span><br></pre></td></tr></table></figure>
-
-<p>注意事项：如果一个字段是primary key，则该字段默认为主键索引。</p>
-<p>删除索引：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> index 索引名 <span class="keyword">on</span> 表名;</span><br></pre></td></tr></table></figure>
-
-<p>查询索引:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> index <span class="keyword">from</span> 表名;</span><br></pre></td></tr></table></figure>
-
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/09/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%8C%EF%BC%89SQL%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E3%80%81%E7%B4%A2%E5%BC%95/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1433,11 +1301,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
+                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">java工具类</a>
+                <a href="javascript:void(0)" class="js-tag color5">设计模式</a>
               </li>
             
             <div class="clearfix"></div>

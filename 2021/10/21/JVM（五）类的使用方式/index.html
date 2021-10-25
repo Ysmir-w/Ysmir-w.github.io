@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>JVM（一）类的生命周期 | Ysmir的博客</title>
+  <title>JVM（五）类的使用方式 | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="什么是JVM?​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上">
+  <meta name="description" content="类的初始化：JVM只会在”首次主动使用“一个类&#x2F;接口时，才会初始化它们。 主动使用 new 构造器类的使用 访问类&#x2F;接口的静态成员 使用Class.forName(“ “)反射时使用的类 初始化一个子类时，该子类的父类也会被初始化 动态语言在执行时所涉及的类也会被初始化（多见于动态代理）  特殊情况：  如果成员是常量，则该常量不会初始化。 如果常量是一个随机数，会被初始化（为了安全）  被动使用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM（一）类的生命周期">
-<meta property="og:url" content="http://example.com/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
+<meta property="og:title" content="JVM（五）类的使用方式">
+<meta property="og:url" content="http://example.com/2021/10/21/JVM%EF%BC%88%E4%BA%94%EF%BC%89%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/index.html">
 <meta property="og:site_name" content="Ysmir的博客">
-<meta property="og:description" content="什么是JVM?​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上">
+<meta property="og:description" content="类的初始化：JVM只会在”首次主动使用“一个类&#x2F;接口时，才会初始化它们。 主动使用 new 构造器类的使用 访问类&#x2F;接口的静态成员 使用Class.forName(“ “)反射时使用的类 初始化一个子类时，该子类的父类也会被初始化 动态语言在执行时所涉及的类也会被初始化（多见于动态代理）  特殊情况：  如果成员是常量，则该常量不会初始化。 如果常量是一个随机数，会被初始化（为了安全）  被动使用">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-10-19T05:36:00.000Z">
-<meta property="article:modified_time" content="2021-10-19T11:32:57.705Z">
+<meta property="article:published_time" content="2021-10-21T08:40:00.000Z">
+<meta property="article:modified_time" content="2021-10-21T09:07:33.525Z">
 <meta property="article:author" content="Ysmir">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -155,61 +155,44 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-JVM（一）类的生命周期" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-JVM（五）类的使用方式" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      JVM（一）类的生命周期
+      JVM（五）类的使用方式
     </h1>
   
 
         
-        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="archive-article-date">
-  	<time datetime="2021-10-19T05:36:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+        <a href="/2021/10/21/JVM%EF%BC%88%E4%BA%94%EF%BC%89%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2021-10-21T08:40:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-21</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="什么是JVM"><a href="#什么是JVM" class="headerlink" title="什么是JVM?"></a>什么是JVM?</h2><p>​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上的目标代码（字节码），就可以在多种平台上不加修改地运行（一次编译，处处运行）。</p>
-<h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p>​        生命周期：加载-&gt;连接-&gt;初始化-&gt;使用-&gt;卸载</p>
-<ul>
-<li><p>加载</p>
-<p>查找并加载类的二进制数据（class文件），将硬盘上的class文件加载到JJVM内存中。</p>
-</li>
-<li><p>连接</p>
-<p>确定类与类之间的关系，连接阶段有三个子阶段分别是：验证，准备，解析。</p>
-<ul>
-<li>验证：校验.class文件的正确性。</li>
-<li>准备：为static静态变量分配内存，并初始化默认值，普通变量暂时不做处理。在准备阶段，JVM中只有类，没有对象。</li>
-<li>解析：把类中的符号引用（全类名，如”org.ysmir.entity.Student“），转为直接引用（内存地址）。</li>
-</ul>
-</li>
-<li><p>初始化</p>
-<p>为static静态变量赋予正确的值。</p>
-</li>
-<li><p>使用</p>
-<p>对象的初始化、垃圾回收、销毁。</p>
-</li>
-<li><p>卸载</p>
-<p>当类使用完后，类就会进入卸载阶段。衡量标准为：</p>
-<ol>
-<li>改类的所有实例都已被回收，也就是堆中不存在该类的任何实例。</li>
-<li>加载该类的ClassLoader都已被回收。</li>
-<li>该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+        <p>类的初始化：JVM只会在”首次主动使用“一个类/接口时，才会初始化它们。</p>
+<h2 id="主动使用"><a href="#主动使用" class="headerlink" title="主动使用"></a>主动使用</h2><ol>
+<li>new 构造器类的使用</li>
+<li>访问类/接口的静态成员</li>
+<li>使用Class.forName(“ “)反射时使用的类</li>
+<li>初始化一个子类时，该子类的父类也会被初始化</li>
+<li>动态语言在执行时所涉及的类也会被初始化（多见于动态代理）</li>
 </ol>
-</li>
+<p>特殊情况：</p>
+<ul>
+<li>如果成员是常量，则该常量不会初始化。</li>
+<li>如果常量是一个随机数，会被初始化（为了安全）</li>
 </ul>
-<h2 id="JVM结束生命周期的时机"><a href="#JVM结束生命周期的时机" class="headerlink" title="JVM结束生命周期的时机"></a>JVM结束生命周期的时机</h2><ul>
-<li>正常结束（卸载阶段）</li>
-<li>异常结束（Exception）/错误（Error）</li>
-<li>System.exit()</li>
-<li>操作系统异常</li>
-</ul>
+<h2 id="被动使用"><a href="#被动使用" class="headerlink" title="被动使用"></a>被动使用</h2><p>除了主动使用，其他都是被动使用。</p>
+<p>实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span></span>&#123;</span><br><span class="line">    Test[] testArray = <span class="keyword">new</span> Test[];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化数组不属于主动使用，因此Test类中的静态代码块并不会执行，Test类不会被初始化。</p>
 
       
 
@@ -300,7 +283,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/21/JVM%EF%BC%88%E4%BA%94%EF%BC%89%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -314,18 +297,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/10/22/JVM%EF%BC%88%E5%85%AD%EF%BC%89%E5%8A%A9%E8%AE%B0%E7%AC%A6/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          JVM（二）JAVA内存模型（Java Memory Model，简称JMM）
+          JVM（六）助记符
         
       </div>
     </a>
   
   
-    <a href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SQL优化（六）锁机制</div>
+    <a href="/2021/10/20/JVM%EF%BC%88%E5%9B%9B%EF%BC%89JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JVM（四）JVM运行时的内存区域</div>
       <i class="icon-circle-right"></i>
     </a>
   

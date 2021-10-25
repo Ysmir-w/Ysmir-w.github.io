@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>JVM（一）类的生命周期 | Ysmir的博客</title>
+  <title>JVM（七）四种引用级别 | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="什么是JVM?​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上">
+  <meta name="description" content="根据引用的强弱关系，可以分为四种引用。 强引用12&#x2F;&#x2F;约定在本例中，等号左边称为引用，等号右边称为引用对象Object obj &#x3D; new Object();  强引用失效的时机：  生命周期结束（作用域结束） 1234public void method()&amp;#123;    Object obj &#x3D; new Object();&amp;#125;&#x2F;&#x2F;当方法执行完毕后，强引用指向的对象new Objce">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM（一）类的生命周期">
-<meta property="og:url" content="http://example.com/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
+<meta property="og:title" content="JVM（七）四种引用级别">
+<meta property="og:url" content="http://example.com/2021/10/22/JVM%EF%BC%88%E4%B8%83%EF%BC%89%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%BA%A7%E5%88%AB/index.html">
 <meta property="og:site_name" content="Ysmir的博客">
-<meta property="og:description" content="什么是JVM?​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上">
+<meta property="og:description" content="根据引用的强弱关系，可以分为四种引用。 强引用12&#x2F;&#x2F;约定在本例中，等号左边称为引用，等号右边称为引用对象Object obj &#x3D; new Object();  强引用失效的时机：  生命周期结束（作用域结束） 1234public void method()&amp;#123;    Object obj &#x3D; new Object();&amp;#125;&#x2F;&#x2F;当方法执行完毕后，强引用指向的对象new Objce">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-10-19T05:36:00.000Z">
-<meta property="article:modified_time" content="2021-10-19T11:32:57.705Z">
+<meta property="article:published_time" content="2021-10-22T11:44:00.000Z">
+<meta property="article:modified_time" content="2021-10-24T11:54:00.610Z">
 <meta property="article:author" content="Ysmir">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -155,60 +155,65 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-JVM（一）类的生命周期" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-JVM（七）四种引用级别" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      JVM（一）类的生命周期
+      JVM（七）四种引用级别
     </h1>
   
 
         
-        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="archive-article-date">
-  	<time datetime="2021-10-19T05:36:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+        <a href="/2021/10/22/JVM%EF%BC%88%E4%B8%83%EF%BC%89%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%BA%A7%E5%88%AB/" class="archive-article-date">
+  	<time datetime="2021-10-22T11:44:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-22</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="什么是JVM"><a href="#什么是JVM" class="headerlink" title="什么是JVM?"></a>什么是JVM?</h2><p>​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上的目标代码（字节码），就可以在多种平台上不加修改地运行（一次编译，处处运行）。</p>
-<h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p>​        生命周期：加载-&gt;连接-&gt;初始化-&gt;使用-&gt;卸载</p>
+        <p>根据引用的强弱关系，可以分为四种引用。</p>
+<h2 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//约定在本例中，等号左边称为引用，等号右边称为引用对象</span></span><br><span class="line">Object obj = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure>
+
+<p>强引用失效的时机：</p>
 <ul>
-<li><p>加载</p>
-<p>查找并加载类的二进制数据（class文件），将硬盘上的class文件加载到JJVM内存中。</p>
-</li>
-<li><p>连接</p>
-<p>确定类与类之间的关系，连接阶段有三个子阶段分别是：验证，准备，解析。</p>
-<ul>
-<li>验证：校验.class文件的正确性。</li>
-<li>准备：为static静态变量分配内存，并初始化默认值，普通变量暂时不做处理。在准备阶段，JVM中只有类，没有对象。</li>
-<li>解析：把类中的符号引用（全类名，如”org.ysmir.entity.Student“），转为直接引用（内存地址）。</li>
+<li><p>生命周期结束（作用域结束）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//当方法执行完毕后，强引用指向的对象new Objcet()就会等待被垃圾回收器GC回收</span></span><br></pre></td></tr></table></figure></li>
+<li><p>引用被置为null，引用对象就会被GC回收</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">obj = <span class="keyword">null</span>;<span class="comment">//此时没有任何引用指向new Object()，因此，new Objcet()就会被等待GC回收</span></span><br></pre></td></tr></table></figure></li>
 </ul>
-</li>
-<li><p>初始化</p>
-<p>为static静态变量赋予正确的值。</p>
-</li>
-<li><p>使用</p>
-<p>对象的初始化、垃圾回收、销毁。</p>
-</li>
-<li><p>卸载</p>
-<p>当类使用完后，类就会进入卸载阶段。衡量标准为：</p>
-<ol>
-<li>改类的所有实例都已被回收，也就是堆中不存在该类的任何实例。</li>
-<li>加载该类的ClassLoader都已被回收。</li>
-<li>该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
-</ol>
-</li>
-</ul>
-<h2 id="JVM结束生命周期的时机"><a href="#JVM结束生命周期的时机" class="headerlink" title="JVM结束生命周期的时机"></a>JVM结束生命周期的时机</h2><ul>
-<li>正常结束（卸载阶段）</li>
-<li>异常结束（Exception）/错误（Error）</li>
-<li>System.exit()</li>
-<li>操作系统异常</li>
+<p>除了以上两个情况以外，其他任何时候GC都不会回收强引用对象，即使JVM内存溢出。</p>
+<h2 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h2><p>根据JVM内存的情况：如果内存充足，GC不会随便的回收软引用对象；如果JVM内存不足，则GC就会主动的回收软引用对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SoftObject</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoftReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SoftReference&lt;SoftObject&gt; softReference = <span class="keyword">new</span> SoftReference&lt;&gt;(<span class="keyword">new</span> SoftObject());</span><br><span class="line">        List&lt;<span class="keyword">byte</span>[]&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//开启一个线程监听，是否有软引用已被回收</span></span><br><span class="line">        <span class="comment">//softReference.get()为软引用指向的对象本身</span></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (softReference.get() == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;软引用对象已经被回收&quot;</span>);</span><br><span class="line">                    System.exit(<span class="number">0</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//不断往集合中存数据，模拟内存不足</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">10</span>);</span><br><span class="line">                list.add(<span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>*<span class="number">1024</span>]);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h2><p>只要GC执行，就会将弱引用对象进行回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    WeakReference&lt;Object&gt; weakReference = <span class="keyword">new</span> WeakReference&lt;&gt;(<span class="keyword">new</span> Object());</span><br><span class="line">    System.out.println(weakReference.get()==<span class="keyword">null</span>?<span class="string">&quot;已被回收&quot;</span>:<span class="string">&quot;未被回收&quot;</span>);</span><br><span class="line">    System.gc();<span class="comment">//建议GC执行一次回收（存在概率）</span></span><br><span class="line">    System.out.println(weakReference.get()==<span class="keyword">null</span>?<span class="string">&quot;已被回收&quot;</span>:<span class="string">&quot;未被回收&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果为：</p>
+<blockquote>
+<p>未被回收<br>已被回收</p>
+</blockquote>
+<h2 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h2><p>虚引用也被称为幻影引用或幽灵引用。</p>
+<p>是否使用了虚引用，和引用对象本身没有任何关系；无法通过虚引用来获取对象本身。虚引用的get()方法返回值默认为null。</p>
+<p>虚引用一般不会单独使用，一般会和引用队列（java.lang.ref.ReferenceQueue）一起使用。</p>
+<p>价值：当GC回收一个对象时，如果GC发现此对象还有一个虚引用，就会将虚引用放入到引用队列中，当虚引用出队后，再去回收该对象。因此我们可以使用虚引用和引用队列，在对象被GC之前，进行一些额外的其他操作。</p>
+<p>GC-&gt;如果有虚引用-&gt;虚引用入队-&gt;虚引用出队-&gt;回收对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyObject</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PhantomReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        MyObject obj = <span class="keyword">new</span> MyObject();</span><br><span class="line">        ReferenceQueue referenceQueue = <span class="keyword">new</span> ReferenceQueue();</span><br><span class="line">        <span class="comment">//虚引用需要和引用队列一起使用</span></span><br><span class="line">        PhantomReference&lt;MyObject&gt; phantomReference = <span class="keyword">new</span> PhantomReference&lt;&gt;(obj,referenceQueue);</span><br><span class="line"></span><br><span class="line">        System.out.println(referenceQueue.poll());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//让GC执行一次回收操作</span></span><br><span class="line">        obj=<span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(<span class="string">&quot;GC执行了&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//GC-&gt;虚引用-&gt;入队-&gt;出队-&gt;obj</span></span><br><span class="line">        System.out.println(referenceQueue.poll());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>null<br>GC执行了<br>java.lang.ref.PhantomReference@1b6d3586</p>
+</blockquote>
+<p>注意，如果虚引用对象重写了finalize()，则JVM会延迟虚引用的入队时间。</p>
+<h2 id="最终引用"><a href="#最终引用" class="headerlink" title="最终引用"></a>最终引用</h2><p>相当于C++中的析构函数，在java中存在Finalizer，可以帮我们自动回收一些不需要的对象，因此在java中不需要写析构函数。</p>
+<h2 id="各个引用的出处"><a href="#各个引用的出处" class="headerlink" title="各个引用的出处"></a>各个引用的出处</h2><ul>
+<li>强引用：new</li>
+<li>软引用：java.lang.ref.SoftReference</li>
+<li>弱引用：java.lang.ref.WeakReference</li>
+<li>虚引用：java.lang.ref.PhantomReference</li>
+<li>最终引用：java.lang.ref.FianlReference</li>
 </ul>
 
       
@@ -300,7 +305,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/22/JVM%EF%BC%88%E4%B8%83%EF%BC%89%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%BA%A7%E5%88%AB/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -314,18 +319,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/10/24/JVM%EF%BC%88%E5%85%AB%EF%BC%89%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          JVM（二）JAVA内存模型（Java Memory Model，简称JMM）
+          JVM（八）双亲委派
         
       </div>
     </a>
   
   
-    <a href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SQL优化（六）锁机制</div>
+    <a href="/2021/10/22/JVM%EF%BC%88%E5%85%AD%EF%BC%89%E5%8A%A9%E8%AE%B0%E7%AC%A6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JVM（六）助记符</div>
       <i class="icon-circle-right"></i>
     </a>
   
