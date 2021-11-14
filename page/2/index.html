@@ -152,6 +152,451 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JVM（二）JAVA内存模型（Java-Memory-Model，简称JMM）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/">JVM（二）JAVA内存模型（Java Memory Model，简称JMM）</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" class="archive-article-date">
+  	<time datetime="2021-10-19T11:34:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h2><p>JMM主要用于定义变量的访问规则（所有线程的共享变量，不能是局部变量），它将内存划分为两个区域：主内存区，工作内存区</p>
+<p><img src="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/JMM.png" alt="JMM" title="JMM"></p>
+<ul>
+<li>主内存区：真实存放变量</li>
+<li>工作内存：存放各个变量的副本，供各个线程所使用。</li>
+</ul>
+<p>各个线程不能直接访问主内存，也不能访问其他线程的工作内存，只能访问自己私有的工作内存，通过主内存间接的访问其他线程的工作内存，这是高并发下数据不安全的根本原因。</p>
+<p>如果线程B修改了变量i的值，线程A如何才能获取到线程B修改后的值？</p>
+<ol>
+<li>线程B将数据同步到主内存——Save</li>
+<li>线程A获取主内存中最新的数据——Load</li>
+</ol>
+<h4 id="不同线程交换数据时经历的步骤"><a href="#不同线程交换数据时经历的步骤" class="headerlink" title="不同线程交换数据时经历的步骤"></a>不同线程交换数据时经历的步骤</h4><ol>
+<li>Lock:将主内存中的变量，标识为一条线程的独占状态</li>
+<li>Read:将主内存中的变量读取或拷贝到工作内存中。</li>
+<li>Load:将2中读取的变量拷贝到变量的副本中。</li>
+<li>Use:将工作内存中的变量副本传递给线程使用。</li>
+</ol>
+<hr>
+<ol start="5">
+<li>Assign:把线程正在使用的变量，传递给工作内存中的变量副本中。</li>
+<li>Store:将工作内存中变量副本的值，传递到主内存中。</li>
+<li>Write:将6中传过来的变量副本的值作为一个主内存中的变量进行存储。</li>
+<li>Unlock:解除线程的独占状态。</li>
+</ol>
+<p>JVM要求以上八个动作必须是原子性的，但是对于64位的数据类型（long、double）有些非原子协议。说明在执行以上八个动作时，可能会出现只读取或写入了半个long或double，因此出现错误。</p>
+<p>如何避免出现上述错误？</p>
+<ul>
+<li>商用JVM已经充分考虑了此问题，不需要我们操作。</li>
+<li>可以通过volatile避免读取半个数据的问题。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（一）类的生命周期" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">JVM（一）类的生命周期</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="archive-article-date">
+  	<time datetime="2021-10-19T05:36:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是JVM"><a href="#什么是JVM" class="headerlink" title="什么是JVM?"></a>什么是JVM?</h2><p>​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上的目标代码（字节码），就可以在多种平台上不加修改地运行（一次编译，处处运行）。</p>
+<h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p>​        生命周期：加载-&gt;连接-&gt;初始化-&gt;使用-&gt;卸载</p>
+<ul>
+<li><p>加载</p>
+<p>查找并加载类的二进制数据（class文件），将硬盘上的class文件加载到JJVM内存中。</p>
+</li>
+<li><p>连接</p>
+<p>确定类与类之间的关系，连接阶段有三个子阶段分别是：验证，准备，解析。</p>
+<ul>
+<li>验证：校验.class文件的正确性。</li>
+<li>准备：为static静态变量分配内存，并初始化默认值，普通变量暂时不做处理。在准备阶段，JVM中只有类，没有对象。</li>
+<li>解析：把类中的符号引用（全类名，如”org.ysmir.entity.Student“），转为直接引用（内存地址）。</li>
+</ul>
+</li>
+<li><p>初始化</p>
+<p>为static静态变量赋予正确的值。</p>
+</li>
+<li><p>使用</p>
+<p>对象的初始化、垃圾回收、销毁。</p>
+</li>
+<li><p>卸载</p>
+<p>当类使用完后，类就会进入卸载阶段。衡量标准为：</p>
+<ol>
+<li>改类的所有实例都已被回收，也就是堆中不存在该类的任何实例。</li>
+<li>加载该类的ClassLoader都已被回收。</li>
+<li>该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+</ol>
+</li>
+</ul>
+<h2 id="JVM结束生命周期的时机"><a href="#JVM结束生命周期的时机" class="headerlink" title="JVM结束生命周期的时机"></a>JVM结束生命周期的时机</h2><ul>
+<li>正常结束（卸载阶段）</li>
+<li>异常结束（Exception）/错误（Error）</li>
+<li>System.exit()</li>
+<li>操作系统异常</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SQL优化（六）锁机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/">SQL优化（六）锁机制</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/" class="archive-article-date">
+  	<time datetime="2021-10-14T06:53:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a>锁机制</h2><p>锁机制：解决因资源共享而造成的并发问题。</p>
+<h3 id="锁的分类："><a href="#锁的分类：" class="headerlink" title="锁的分类："></a>锁的分类：</h3><ul>
+<li>根据操作类型分类：<ul>
+<li>读锁（共享锁）：对同一个数据，多个读操作可以同时进行，互不干扰。</li>
+<li>写锁（排他锁、互斥锁）：如果当前写操作没有完毕，则无法进行其他的读写操作。</li>
+</ul>
+</li>
+<li>根据操作范围分类：<ul>
+<li>表锁：一次性对一张表整体加锁。如MyISAM存储引擎使用表锁，开销小，加锁快。无死锁，但锁的范围大，容易发生锁冲突，并发度低。</li>
+<li>行锁：一次性对一条数据加锁。如InnoDB存储引擎使用行锁，开销大，加锁慢。容易出现死锁。锁的范围较小，不容易发生锁冲突，并发度高（很小概率发生高并发问题：脏读、幻读、不可重复读以及丢失更新）。</li>
+<li>页锁</li>
+</ul>
+</li>
+</ul>
+<h3 id="表锁："><a href="#表锁：" class="headerlink" title="表锁："></a>表锁：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#加锁</span><br><span class="line">lock table 表1 read/write ,表2 read/write ,...... ;</span><br><span class="line">#释放锁</span><br><span class="line">unlock tables;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>读锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock talbe 表 read;</span><br></pre></td></tr></table></figure>
+
+<p>如果某一个会话对一个表加了读锁，则该会话只能对该表进行读操作，不能进行写操作，对其他表读写操作都不能进行。其他会话可以对该表进行读操作，但进行写操作会进入阻塞状态，等待锁释放后才能继续执行，对其他表读写操作都可以进行。</p>
+</li>
+<li><p>写锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock table 表 write;</span><br></pre></td></tr></table></figure>
+
+<p>如果一个会话对一个表加了写锁，则该会话可以对该表进行任何操作，但不能对其他表进行任何操作。其他会话只有当该会话释放锁后才能对该表进行读写操作。</p>
+</li>
+</ul>
+<h3 id="行锁："><a href="#行锁：" class="headerlink" title="行锁："></a>行锁：</h3><p>关闭MySQL自提交：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set autocommit = 0;</span><br><span class="line">set transaction;</span><br><span class="line">begin;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>如果某一会话对某条数据进行了DML操作，则其他会话必须等待该会话结束事务（commit/rollback）后，才能对该数据进行操作。</p>
+</li>
+<li><p>表锁通过unlock tables语句和事务解锁，行锁是通过事务解锁。</p>
+</li>
+<li><p>行锁一次锁一行数据，如果操作的是不同数据，则互不干扰。</p>
+</li>
+<li><p>如果没有索引或者索引失效，行锁会自动转化为表锁。</p>
+</li>
+<li><p>行锁有一种特殊情况——间隙锁。</p>
+<ul>
+<li>间隙：值在where范围内，但却不存在</li>
+<li>MySQL会自动给间隙增加间隙锁（行锁）。</li>
+</ul>
+</li>
+<li><p>如果有where，则行锁实际加锁的范围就是where后面的范围（不是实际的值）。</p>
+</li>
+<li><p>InnoDB默认采用行锁</p>
+<ul>
+<li>优点：并发能力强，效率高。</li>
+<li>缺点：比表锁性能损耗大。</li>
+<li>建议高并发使用InnoDB，其他使用MyISAM。</li>
+</ul>
+</li>
+<li><p>查询行锁</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> 表 <span class="keyword">where</span> 条件 <span class="keyword">for</span> update;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="MySQL表级锁的锁模式"><a href="#MySQL表级锁的锁模式" class="headerlink" title="MySQL表级锁的锁模式"></a>MySQL表级锁的锁模式</h3><p>MyISAM在执行查询语句（SELECT）前，会自动给涉及的所有表加读锁，在执行更新操作（DML）前，会自动给涉及的表加写锁。</p>
+<p>对MyISAM表进行操作时，会出现以下情况：</p>
+<ul>
+<li>对MyISAM表的读操作（加读锁），不会阻塞其他进程（会话）对同一表的读请求，但会阻塞对同一表的写请求。只有当读锁释放后，才会执行其他进程的写操作。</li>
+<li>对MyISAM表的写操作（加写锁），会阻塞其他进程（会话）对同一表的读和写操作，只有当写锁释放后，才会执行其他进程的读写操作。</li>
+</ul>
+<h2 id="分析表锁定"><a href="#分析表锁定" class="headerlink" title="分析表锁定"></a>分析表锁定</h2><p>查看哪些表加了锁：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show open tables;#代表加了锁</span><br></pre></td></tr></table></figure>
+
+<p>分析表锁定的严重程度：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;table%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Table_locks_immediate:即可能获取到的锁。</p>
+<p>Table_locks_waited:需要等待的表所数（如果该值越大，说明越大的锁竞争）。</p>
+<p>一般建议如果Table_locks_immediate/Table_locks_waited&gt;5000，建议采用InnoDB引擎，否则采用MyISAM引擎。</p>
+<h2 id="分析行锁定"><a href="#分析行锁定" class="headerlink" title="分析行锁定"></a>分析行锁定</h2><p>查看哪些行加了锁：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show status like &#x27;%innodb_row_lock%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>Innodb_row_lock_current_waits:当前正在等待锁的数量。</p>
+<p>Innodb_row_lock_time:等待总时长。从系统启动到当前总共锁定的时间。</p>
+<p>Innodb_row_lock_time_avg:平均等待时常。从系统启动到现在平均等待的时间。</p>
+<p>Innodb_row_lock_time_max:最大等待时常，最大等待的一次时间。</p>
+<p>Innodb_row_lock_waits:等待次数。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SQL优化（五）分析海量数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/13/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%94%EF%BC%89%E5%88%86%E6%9E%90%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/">SQL优化（五）分析海量数据</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/13/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%94%EF%BC%89%E5%88%86%E6%9E%90%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/" class="archive-article-date">
+  	<time datetime="2021-10-13T12:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="profiles"><a href="#profiles" class="headerlink" title="profiles"></a>profiles</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%profiling%&#x27;;#查询profiles是否开启</span><br><span class="line">set profiling = on; #设置为开启</span><br><span class="line">show profiles;	#默认为关闭,会记录所有profiling打开之后的全部SQL查询语句所花费的时间，缺点是不够精确。</span><br></pre></td></tr></table></figure>
+
+<h3 id="精确分析——SQL诊断"><a href="#精确分析——SQL诊断" class="headerlink" title="精确分析——SQL诊断"></a>精确分析——SQL诊断</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show profile all for query Query_Id;</span><br><span class="line">show profile ...., ..., for query Query_Id;</span><br></pre></td></tr></table></figure>
+
+<h3 id="全局查询日志"><a href="#全局查询日志" class="headerlink" title="全局查询日志"></a>全局查询日志</h3><p>记录开启之后的全部SQL语句。（这些全局的记录操作仅仅在调优、开发时开启即刻，在部署时关闭）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%general_log%&#x27;;</span><br><span class="line">set global general_log = 1;#开启全局日志</span><br><span class="line">set global log_output=&#x27;table&#x27;;#开启将数据记录到表</span><br><span class="line">set global general_log_file=&#x27;文件地址&#x27;;</span><br><span class="line">set global log_output=&#x27;file&#x27;;#开启将数据记录到文件中</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/13/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%94%EF%BC%89%E5%88%86%E6%9E%90%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Stream流操作分类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -870,347 +1315,9 @@
 
 
   
-    <article id="post-二十三种设计模式（二十四）Interpreter解析器模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/">二十三种设计模式（二十四）Interpreter 解析器模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，如果某一特定领域的问题比较复杂，类似的结构不断重复出现，如果使用普通的编程方式来实现 将面临非常频繁的变化。在这种情况下，将特定领域的问题表达为某种语法规则下的句子，然后构建一个解释器来解释这样的句子，从而达到解决问题的目的。</p>
-<p>Interpreter（解释器模式）：给定一个语言，定义它的文法的一种表示，并定义一种解释器，这个解释器使用该表示来解释语言中的句子。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Expression</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String,Integer&gt; <span class="keyword">var</span>)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VarExpression</span> <span class="keyword">implements</span> <span class="title">Expression</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String key;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">VarExpression</span><span class="params">(String key)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.key=key;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String, Integer&gt; <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">var</span>.get(<span class="keyword">this</span>.key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">SymbolExpression</span> <span class="keyword">implements</span> <span class="title">Expression</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> Expression left;</span><br><span class="line">    <span class="keyword">protected</span> Expression right;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SymbolExpression</span><span class="params">(Expression left,Expression right)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.left=left;</span><br><span class="line">        <span class="keyword">this</span>.right=right;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AddExpression</span> <span class="keyword">extends</span> <span class="title">SymbolExpression</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AddExpression</span><span class="params">(Expression left, Expression right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(left, right);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String, Integer&gt; <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="keyword">super</span>.left.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">int</span> right = <span class="keyword">super</span>.right.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">return</span> left+right;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SubExpression</span> <span class="keyword">extends</span> <span class="title">SymbolExpression</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SubExpression</span><span class="params">(Expression left, Expression right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(left, right);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String, Integer&gt; <span class="keyword">var</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="keyword">super</span>.left.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">int</span> right = <span class="keyword">super</span>.right.interpreter(<span class="keyword">var</span>);</span><br><span class="line">        <span class="keyword">return</span> left-right;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Calculator</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Expression expression;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Calculator</span><span class="params">(String expStr)</span> </span>&#123;</span><br><span class="line">        Stack&lt;Expression&gt; stack = <span class="keyword">new</span> Stack&lt;Expression&gt;();</span><br><span class="line">        <span class="keyword">char</span>[] charArray = expStr.toCharArray();</span><br><span class="line">        Expression left = <span class="keyword">null</span>;</span><br><span class="line">        Expression right = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; charArray.length; i++) &#123;</span><br><span class="line">            <span class="keyword">switch</span> (charArray[i]) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;+&#x27;</span>:</span><br><span class="line">                    left=stack.pop();</span><br><span class="line">                    right = <span class="keyword">new</span> VarExpression(String.valueOf(charArray[++i]));</span><br><span class="line">                    stack.push(<span class="keyword">new</span> AddExpression(left,right));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;-&#x27;</span>:</span><br><span class="line">                    left=stack.pop();</span><br><span class="line">                    right = <span class="keyword">new</span> VarExpression(String.valueOf(charArray[++i]));</span><br><span class="line">                    stack.push(<span class="keyword">new</span> SubExpression(left,right));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    stack.push(<span class="keyword">new</span> VarExpression(String.valueOf(charArray[i])));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.expression=stack.pop();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">run</span><span class="params">(HashMap&lt;String,Integer&gt; <span class="keyword">var</span>)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.expression.interpreter(<span class="keyword">var</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String expStr=<span class="string">&quot;1+2+3-1-2-3&quot;</span>;</span><br><span class="line">        HashMap&lt;String,Integer&gt; map = <span class="keyword">new</span> HashMap&lt;String,Integer&gt;();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">char</span> ch:expStr.toCharArray())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(ch!=<span class="string">&#x27;+&#x27;</span>&amp;&amp;ch!=<span class="string">&#x27;-&#x27;</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                map.put(String.valueOf(ch),Integer.valueOf(ch));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        Calculator calculator = <span class="keyword">new</span> Calculator(expStr);</span><br><span class="line"></span><br><span class="line">        System.out.println(calculator.run(map));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/Interpreter.png" alt="解析器模式" title="解析器模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>Interpreter模式的应用场合是Interpreter模式应用的难点，只有满足“业务规则频繁变化，其变化的结构不断重复出现，并且容易抽象为语法规则的问题”才适合使用Interpreter模式。</li>
-<li>使用Interpreter模式来表示文法规则，从而可以使用面向对象技巧来方便地“扩展”文法。</li>
-<li>Interpreter模式比较适合简单的文法表示，对于复杂的文法表示，Interpreter模式会产生比较大的类层次结构，需要求助于语法分析生成器这样的标准工具。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E5%9B%9B%EF%BC%89Interpreter%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（二十三）Visitor访问器模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%89%EF%BC%89Visitor%E8%AE%BF%E9%97%AE%E5%99%A8%E6%A8%A1%E5%BC%8F/">二十三种设计模式（二十三）Visitor 访问器模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%89%EF%BC%89Visitor%E8%AE%BF%E9%97%AE%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，由于需求的改变，某些类层次结构中常常需要增加新的行为（方法），如果直接在基类中做这样的修改，将会给子类带来很繁重的变更负担，甚至破坏原有设计。Visitor访问器模式可以在不更改层次结构的前提下，在运行时根据需要透明地为类层级结构上的各个类动态添加新的操作，从而避免上述问题。</p>
-<p>Visitor（访问器模式）：表示一个作用于某对象结构中的各元素的操作。使得可在在不改变（稳定）各元素的前提下定义（扩展）作用于这些元素的新操作（变化）。</p>
-<p>Visitor访问器模式代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Element</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteElementA</span> <span class="keyword">implements</span> <span class="title">Element</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span> </span>&#123;</span><br><span class="line">        visitor.visitConcreteElementA(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteElementB</span> <span class="keyword">implements</span> <span class="title">Element</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span> </span>&#123;</span><br><span class="line">        visitor.visitConcreteElementB(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Visitor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitConcreteElementA</span><span class="params">(ConcreteElementA concreteElementA)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitConcreteElementB</span><span class="params">(ConcreteElementB concreteElementB)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteVisitor1</span> <span class="keyword">implements</span> <span class="title">Visitor</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitConcreteElementA</span><span class="params">(ConcreteElementA concreteElementA)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;具体的访问者1操作A&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitConcreteElementB</span><span class="params">(ConcreteElementB concreteElementB)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;具体的访问者1操作B&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteVisitor2</span> <span class="keyword">implements</span> <span class="title">Visitor</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitConcreteElementA</span><span class="params">(ConcreteElementA concreteElementA)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;具体的访问者2操作A&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitConcreteElementB</span><span class="params">(ConcreteElementB concreteElementB)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;具体的访问者2操作B&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectStructure</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Element&gt; list = <span class="keyword">new</span> ArrayList&lt;Element&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">accept</span><span class="params">(Visitor visitor)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Iterator&lt;Element&gt; iterator = list.iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext())</span><br><span class="line">        &#123;</span><br><span class="line">            iterator.next().accept(visitor);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Element element)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        list.add(element);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">(Element element)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        list.remove(element);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ObjectStructure os = <span class="keyword">new</span> ObjectStructure();</span><br><span class="line">        os.add(<span class="keyword">new</span> ConcreteElementA());</span><br><span class="line">        os.add(<span class="keyword">new</span> ConcreteElementB());</span><br><span class="line"></span><br><span class="line">        Visitor visitor1 = <span class="keyword">new</span> ConcreteVisitor1();</span><br><span class="line">        Visitor visitor2 = <span class="keyword">new</span> ConcreteVisitor2();</span><br><span class="line"></span><br><span class="line">        os.accept(visitor1);</span><br><span class="line">        </span><br><span class="line">        os.accept(visitor2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%89%EF%BC%89Visitor%E8%AE%BF%E9%97%AE%E5%99%A8%E6%A8%A1%E5%BC%8F/Visitor.png" alt="访问器模式" title="访问器模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>Visitor模式通过所谓双重分发（double dispatch）来实现在不更改（不添加新的操作—编译时）Element类层次结构的前提下，在运行时透明地为类层次结构上的各个类动态添加新的操作（支持变化）。</li>
-<li>所谓双重分发即Visitor模式中间包括了两个多态分发（注意其中的多态机制）：第一个为accept方法的多态辨析；第二个为visitElementX方法的多态辨析。</li>
-<li>Visitor模式的最大缺点在于扩展类层次结构（增添新的Element子类），会导致Visitor类的改变。因此Visitor模式适用于“Element类层次结构稳定，而其中的操作却经常面临频繁改动”。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%89%EF%BC%89Visitor%E8%AE%BF%E9%97%AE%E5%99%A8%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（二十二）Command命令模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%8C%EF%BC%89Command%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/">二十三种设计模式（二十一）Command 命令模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%8C%EF%BC%89Command%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，“行为请求者”与“行为实现者”通常呈现一种“紧耦合”。但在某些场合——比如需要对行为进行“记录、撤销/重(undo/redo)、事务”等处理，这种无法抵御变化的紧耦合是不合适的。在这种情况下，Command命令模式可以将“行为请求者”与”行为实现者“解耦，将一组行为抽象为对象，可以实现二者之间的松耦合。</p>
-<p>Command（命令模式）：将一个请求（行为）封装为一个对象，从而使你用不同的请求对客户进行参数化；对请求排队或记录请求日志，以及支持可撤销的操作。</p>
-<p>Command命令模式代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Receiver</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;接受者的action()方法被调用了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Command</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteCommand</span> <span class="keyword">implements</span> <span class="title">Command</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Receiver receiver;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteCommand</span><span class="params">(Receiver receiver)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.receiver=receiver;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        receiver.action();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Invoker</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Command command;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Invoker</span><span class="params">(Command command)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.command=command;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCommand</span><span class="params">(Command command)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.command=command;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;调用者执行命令Command&quot;</span>);</span><br><span class="line">        command.execute();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Command command = <span class="keyword">new</span> ConcreteCommand(<span class="keyword">new</span> Receiver());</span><br><span class="line">        Invoker invoker = <span class="keyword">new</span> Invoker(command);</span><br><span class="line">        invoker.call();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%8C%EF%BC%89Command%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/Command.png" alt="命令模式" title="命令模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>Command模式的根本目的在于将”行为请求者“与”行为实现者“解耦，在面向对象语言中，常见的实现手段是”将行为抽象为对象“。</li>
-<li>实现Command接口的具体命令对象ConcreteCommand有时候根据需要可能会保存一些额外的状态信息。通过使用Composite模式，可以将多个”命令“封装为一个”符合命令“MacroCommand。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%8C%EF%BC%89Command%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-二十三种设计模式（二十一）ChainOfResponsibility职责链模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%80%EF%BC%89ChainOfResponsibility%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/">二十三种设计模式（二十一）Chain of Responsibility 职责链模式</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%80%EF%BC%89ChainOfResponsibility%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>动机：在软件构建过程中，一个请求可能被多个对象处理，但是每个请求在运行时只能有一个接受者，如果显示指定，将必不可少地带来请求发送这与接受者的紧耦合。Chain of Responsibility职责链模式可以使请求的发送者不需要指定具体的接受者，让请求的接受者自己在运行时决定来处理请求，从而使两者解耦。</p>
-<p>Chain of Responsibility（职责链模式）：使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象练成一条链，并沿着这条链传递请求，直到有一个对象处理它为止。</p>
-<p>Chain of Responsibility职责链模式代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Handler next;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNext</span><span class="params">(Handler next)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.next = next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Handler <span class="title">getNext</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(String request)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler1</span> <span class="keyword">extends</span> <span class="title">Handler</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(String request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(request.equals(<span class="string">&quot;1&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;具体的处理者1负责处理该请求&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(getNext()!=<span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                getNext().handleRequest(request);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;无人处理该请求&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler2</span> <span class="keyword">extends</span> <span class="title">Handler</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(String request)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(request.equals(<span class="string">&quot;2&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;具体的处理者2负责处理该请求&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(getNext()!=<span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                getNext().handleRequest(request);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;无人处理该请求&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Handler handler1 = <span class="keyword">new</span> ConcreteHandler1();</span><br><span class="line">        Handler handler2 = <span class="keyword">new</span> ConcreteHandler2();</span><br><span class="line">        handler1.setNext(handler2);</span><br><span class="line"></span><br><span class="line">        handler1.handleRequest(<span class="string">&quot;2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%80%EF%BC%89ChainOfResponsibility%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/ChainOfResponsibility.png" alt="职责链模式" title="职责链模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>Chain of Responsibility模式的应用场合在于”一个请求可能有多个接受者，但是最后真正的接受者只有一个“，这时候请求发送者与接受者的耦合有可能出现”变化脆弱“的症状，职责链的目的就是将二者解耦，从而更好的应对变化。</li>
-<li>应用了Chain of Responsibility模式后，对象的指责分派将更具灵活性。我们可以在运行时动态添加/修改请求的处理职责。</li>
-<li>如果请求传递到职责链的末尾仍得不到处理，应该有一个合理的缺省机制。这也是每一个接受对象的责任，而不是发出请求的对象的责任。                                                                                                                        </li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%B8%80%EF%BC%89ChainOfResponsibility%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1309,7 +1416,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Nginx配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">RabbitMQ</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -152,6 +152,412 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-RabbitMQ（一）HelloWorld模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/11/14/RabbitMQ%EF%BC%88%E4%B8%80%EF%BC%89HelloWorld%E6%A8%A1%E5%9E%8B/">RabbitMQ（一）HelloWorld模型</a>
+    </h1>
+  
+
+        
+        <a href="/2021/11/14/RabbitMQ%EF%BC%88%E4%B8%80%EF%BC%89HelloWorld%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
+  	<time datetime="2021-11-14T12:48:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>工具类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitmqUtil</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> ConnectionFactory  connectionFactory = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(connectionFactory==<span class="keyword">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (ConnectionFactory.class)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(connectionFactory==<span class="keyword">null</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    connectionFactory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//设置连接主机</span></span><br><span class="line">        connectionFactory.setHost(<span class="string">&quot;192.168.239.129&quot;</span>);</span><br><span class="line">        <span class="comment">//设置端口</span></span><br><span class="line">        connectionFactory.setPort(<span class="number">5672</span>);</span><br><span class="line">        <span class="comment">//设置虚拟主机</span></span><br><span class="line">        connectionFactory.setVirtualHost(<span class="string">&quot;/ysmir&quot;</span>);</span><br><span class="line">        <span class="comment">//设置访问虚拟主机的账户</span></span><br><span class="line">        connectionFactory.setUsername(<span class="string">&quot;ysmir&quot;</span>);</span><br><span class="line">        <span class="comment">//设置虚拟主机的密码</span></span><br><span class="line">        connectionFactory.setPassword(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">createConnection</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection=connectionFactory.newConnection();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> connection;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">closeAll</span><span class="params">( Channel channel,Connection connection)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(channel!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                channel.close();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(connection!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                connection.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>生产者进程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Provider</span> </span>&#123;</span><br><span class="line">    <span class="comment">//生产消息</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//创建连接对象</span></span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建连接通道</span></span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//获取连接</span></span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            <span class="comment">//获取连接通道</span></span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line">            <span class="comment">//通道消息绑定对应消息队列,queueDeclare方法当队列不存在时会自动创建一个</span></span><br><span class="line">            <span class="comment">//参数1：队列名称，如果队列不存在则自动创建</span></span><br><span class="line">            <span class="comment">//参数2：用来定义队列的特性是否需要持久化，注意需要保持消费者和生产者之间的参数对应</span></span><br><span class="line">            <span class="comment">//参数3：是否独占队列</span></span><br><span class="line">            <span class="comment">//参数4：是否在消费完成后自动删除队列</span></span><br><span class="line">            <span class="comment">//参数5：额外参数</span></span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;hello&quot;</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//发布消息</span></span><br><span class="line">            <span class="comment">//参数一：交换机名称 参数二：队列名称 参数三：传递消息额外设置 参数4：消息的具体内容</span></span><br><span class="line">            <span class="comment">//如果想要实现消息持久化，需要设置参数props为MessageProperties.PERSISTENT_TEXT_PLAIN</span></span><br><span class="line">            channel.basicPublish(<span class="string">&quot;&quot;</span>, <span class="string">&quot;hello&quot;</span>, MessageProperties.PERSISTENT_TEXT_PLAIN, <span class="string">&quot;hello world&quot;</span>.getBytes());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            RabbitmqUtil.closeAll(channel, connection);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Provider().testSendMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>消费者进程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAcceptMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;hello&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            <span class="comment">//消费消息</span></span><br><span class="line">            <span class="comment">//参数一：消费哪个队列的消息</span></span><br><span class="line">            <span class="comment">//参数二：开启消息的自动确认机制</span></span><br><span class="line">            <span class="comment">//参数三：消费消息时的回调接口</span></span><br><span class="line">            channel.basicConsume(<span class="string">&quot;hello&quot;</span>,<span class="keyword">true</span>,<span class="keyword">new</span> DefaultConsumer(channel)&#123;</span><br><span class="line">                <span class="comment">//body[]为消息队列中取出的消息</span></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;消息队列Hello中的消息为：&quot;</span>+<span class="keyword">new</span> String(body));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Consumer().testAcceptMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">RabbitMQ</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/11/14/RabbitMQ%EF%BC%88%E4%B8%80%EF%BC%89HelloWorld%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Nginx配置" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/11/11/Nginx%E9%85%8D%E7%BD%AE/">Nginx配置</a>
+    </h1>
+  
+
+        
+        <a href="/2021/11/11/Nginx%E9%85%8D%E7%BD%AE/" class="archive-article-date">
+  	<time datetime="2021-11-11T11:59:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>Nginx的配置的配置文件有三部分组成</p>
+<ul>
+<li><p>全局块</p>
+<p>从文件开始到events之前的内容，主要设置一些影响Nginx服务器整体运行的配置指令，主要包括配置运行Nginx服务器的用户（组），允许生成的worker process数，进程PID存放路径，日志存放路径和类型以及配置文件的引入等。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>; <span class="comment">#工作进程的数量，值越大，可以支持的并发处理量也就越多，一般与cpu核心数相同。</span></span><br></pre></td></tr></table></figure></li>
+<li><p>events</p>
+<p>events块涉及的指令主要影响Nginx服务器与用户的网络连接，常用的设置包括是否开启对多work process下的网络连接进行序列化，是否允许同时接收多个网络连接，选取那种事件驱动模型来处理连接请求，每个work process 可以同时支持的最大连接数等。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">worker_connections</span>  <span class="number">1024</span>;<span class="comment"># 每个work process最大的连接数为1024</span></span><br></pre></td></tr></table></figure></li>
+<li><p>http</p>
+<p>http是Nginx服务器配置中最频繁的部分，代理，缓存和日志定义等绝大多数功能和第三方模块的配置都在这里，http又包括http全局块，server块。</p>
+<ul>
+<li>http全局块配置的指令包括文件引入，MIME-TYPE定义、连接超时时间，但链接请求上限等。</li>
+<li>server块和虚拟主机有密切联系，虚拟主机从用户的角度来看，和一台独立的硬件主机是完全一样的，该技术的产生是为了节省互联网服务硬件成本。</li>
+</ul>
+</li>
+</ul>
+<h2 id="反向代理配置实例"><a href="#反向代理配置实例" class="headerlink" title="反向代理配置实例"></a>反向代理配置实例</h2><p>需要的实现的效果：</p>
+<ul>
+<li>打开浏览器，在浏览器的地址栏输入一个地址，跳转到linux系统tomcat主页面中。</li>
+</ul>
+<p>准备工作：</p>
+<p>​    在linux中安装tomcat，使用默认端口8080</p>
+<p>在Nginx进行请求转发的配置（反向代理的配置）</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line"><span class="attribute">server_name</span>  <span class="number">192.168.239.129</span>;</span><br><span class="line"><span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">root</span>   html;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://localhost:8080;</span><br><span class="line">    <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>实现的效果：使用Nginx反向代理，根据访问的路径跳转到不同端口的服务器中</p>
+<p>准备工作：准备两个tomcat，配置一个端口为8080，另一个端口为8081，创建两个供测试使用的项目</p>
+<p>配置：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span>  &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">9001</span>;</span><br><span class="line">    <span class="attribute">server_name</span> <span class="number">192.168.239.129</span>;</span><br><span class="line">    <span class="attribute">location</span> <span class="regexp">~ /test1/</span> &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://localhost:8080;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="attribute">location</span> <span class="regexp">~ /test2/</span> &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://localhost:8081;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>location中的符号：</p>
+<ul>
+<li>=：用于不含正则表达式的url前，要求请求字符串与url严格匹配，如果匹配成功，就停止继续向下搜索并立即处理该请求。</li>
+<li>~：用于表示url包含正则表达式，并区分大小写</li>
+<li>~*：用于表示url中包含正则表达式，并且不区分大小写。</li>
+<li>^：用于不包含正则表达式的url前，要求Nginx服务器找到标识url和请求字符串匹配度最高的location后，立即使用此location处理请求，而不再使用location块中的正则url和请求字符串做匹配。</li>
+<li>如果url包含正则表达式，则必须要有<del>或者</del>*标识。</li>
+</ul>
+<h2 id="负载均衡配置实例"><a href="#负载均衡配置实例" class="headerlink" title="负载均衡配置实例"></a>负载均衡配置实例</h2><p>实现效果：浏览器输入一个地址，负载均衡效果，请求根据规则平均的分发到服务器中。</p>
+<p>主备工作：两台tomcat服务器，一台端口号为8080，另一台端口号为8081，在两个tomcat服务器中分别创建项目用于测试。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> myserver&#123;</span><br><span class="line">        <span class="attribute">server</span>  localhost:<span class="number">8080</span> weight=<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">server</span>  localhost:<span class="number">8081</span> weight=<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line">server&#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">server_name</span> localhost;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">                <span class="attribute">proxy_pass</span> http://myserver;</span><br><span class="line">                <span class="attribute">proxy_connect_timeout</span> <span class="number">10</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>随着互联网信息的爆炸性增长，负载均衡（load balance）已经不再是一个很陌生的话题，顾名思义，负载均衡即是将负载分摊到不同的服务单元，既保证服务的可用性，又保证响应足够快，给用户很好的体验。快速增长的访问量和数据流量催生了各式各样的负载均衡产品，很多专业的负载均衡硬件提供了很好的功能，但却价格不菲，这使得负载均衡软件大受欢迎，Nginx就是其中的一个，在linux下有Nginx、LVS、Haproxy等等服务可以提供负载均衡服务，而且Nginx提供了好几种分配策略。</p>
+<ul>
+<li><p>轮询（默认）</p>
+<p>每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除。</p>
+</li>
+<li><p>weight</p>
+<p>weight代表权重，默认为1，权重越高被分配的客户端越多，指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。</p>
+</li>
+<li><p>ip_hash</p>
+<p>每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session问题例如：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> server_pool&#123;</span><br><span class="line">    ip_hash;</span><br><span class="line">    <span class="attribute">server</span> localhost:<span class="number">8888</span>;</span><br><span class="line">    <span class="attribute">server</span> localhost:<span class="number">9000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>fair（第三方）</p>
+<p>按照后端服务器的响应时间分配，响应时间越短，越优先分配。</p>
+</li>
+</ul>
+<h2 id="高可用集群配置"><a href="#高可用集群配置" class="headerlink" title="高可用集群配置"></a>高可用集群配置</h2><p>准备工作：两台服务器，安装Nginx，keepalived</p>
+<p>在/etc/keepaliaved/目录下找到keepalived.conf配置文件进行修改</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">vrrp_script</span> chk_http_post&#123;</span><br><span class="line">    <span class="attribute">script</span> <span class="string">&quot;usr/local/src/nginx_check.sh&quot;</span> <span class="comment">#检测nginx是否存活的脚本的位置</span></span><br><span class="line">    interval <span class="number">2</span> <span class="comment">#检测脚本执行的间隔</span></span><br><span class="line">    weight -<span class="number">20</span> <span class="comment">#权重 当服务器挂掉后服务器的权重</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">vrrp_instance VI-<span class="number">1</span>&#123;</span><br><span class="line">    <span class="attribute">state</span> MASTER <span class="comment">#如果是备份服务器，将MASTER改为BACKUP</span></span><br><span class="line">    interface ens33 <span class="comment">#网卡</span></span><br><span class="line">    virtual_router_id <span class="number">51</span> <span class="comment">#主机与备份机的virtual_router_id必须相同</span></span><br><span class="line">    priority <span class="number">100</span> <span class="comment">#主机与备份机取不同的优先级，主机的值较大，备份机的值较小</span></span><br><span class="line">    advert_int <span class="number">1</span> <span class="comment">#每隔多长时间发送一个心跳</span></span><br><span class="line">    authentication&#123; <span class="comment">#校验权限的方式</span></span><br><span class="line">		<span class="attribute">auth_type</span> PASS <span class="comment">#方式是密码</span></span><br><span class="line">        auth_pass <span class="number">1111</span> <span class="comment">#密码是1111</span></span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress&#123;</span><br><span class="line">    	192.168.17.50 <span class="comment">#vRRP H虚拟地址    </span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>检测是否存活的脚本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">! /bin/bash</span></span><br><span class="line">A=`ps -C nginx --no-hader |WC -l`</span><br><span class="line">if [ $A -eq 0 ]</span><br><span class="line">then</span><br><span class="line">	/usr/local/nginx/sbin/nginx</span><br><span class="line">    sleep 2</span><br><span class="line">    if [ `ps -C nignx --no-header | wc -l -eq 0` ]</span><br><span class="line">   	then</span><br><span class="line">   		killall keepalived</span><br><span class="line">   	fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>启动keepalived和Nginx</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start keepalived.service #启动keepalived</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Nginx配置</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/11/11/Nginx%E9%85%8D%E7%BD%AE/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（十）GC调优" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/28/JVM%EF%BC%88%E5%8D%81%EF%BC%89GC%E8%B0%83%E4%BC%98/">JVM（十）GC调优</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/28/JVM%EF%BC%88%E5%8D%81%EF%BC%89GC%E8%B0%83%E4%BC%98/" class="archive-article-date">
+  	<time datetime="2021-10-28T11:54:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是调优？"><a href="#什么是调优？" class="headerlink" title="什么是调优？"></a>什么是调优？</h2><p>调优是一种权衡，以xx换xx的策略。因此在调优之前，必须明确方向:低延迟？高吞吐量呢？</p>
+<p>一般有两种情况需要考虑</p>
+<ol>
+<li>在已知条件相同的前提下，牺牲低延迟来换取高吞吐量，或者反之。</li>
+<li>随着软件硬件技术的发展，可能两者都升高。</li>
+</ol>
+<h2 id="GC的发展"><a href="#GC的发展" class="headerlink" title="GC的发展"></a>GC的发展</h2><p>JVM自身在GC上进行了很多次的改进升级。</p>
+<p>JVM默认的GC：CMS GC（在jdk9后被逐步废弃）-&gt;G1 GC(jdk9)-&gt;Z GC(jdk11)</p>
+<ul>
+<li>Serial GC：串行GC，是一种在单核环境下的串行回收器，当GC回收的时刻，其他线程必须等待，一般不会使用。</li>
+<li>Parallel GC：在Serial GC的基础上，使用了多线程技术，提高了吞吐量。</li>
+<li>CMS GC：使用了多线程技术，使用了”标记-清除“算法，可以极大提升效率（尤其是在低延迟上有非常大的提升）。繁琐，参数太多，对开发者的经验要求太高。</li>
+<li>G1 GC：jdk9开始使用的默认GC。特点：将内存划分为很多大小相等的region，并会对这些区域的使用状态进行标记。以便GC在回收时，能够快速定位出哪些region是空闲的，哪些是有垃圾对象，从而提升GC的效率。G1使用的算法是”标记-整理“算法。</li>
+<li>Z GC：jdk11开始提供全新的GC。回收TB级别的垃圾在毫秒范围。</li>
+</ul>
+<p>如果从生命周期划分，GC也可以划分为:Minor GC和Full GC</p>
+<ul>
+<li>Minor GC:回收新生代中的对象。</li>
+<li>Full GC:回收整个堆空间（新生代、老生代）</li>
+</ul>
+<h3 id="优化案例"><a href="#优化案例" class="headerlink" title="优化案例"></a>优化案例</h3><p>如果通过检测工具，发现Minor GC和 Full GC都在频繁的回收，如何回收？</p>
+<p>首先，分析Minor GC为什么会频繁执行？因为新生代中的对象太多了-&gt;短生命周期的对象太多了-&gt;造成逃逸到老年代中的对象越多-&gt;新生代多+老生代多-&gt;Full GC也会被触发</p>
+<p>根本原因：新生代太多</p>
+<p>优化方案：可以尝试调大新生代的最大空间，再调大新生代到老生代的阈值，从而降低短生命周期的对象从新生代到老年代的概率。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/28/JVM%EF%BC%88%E5%8D%81%EF%BC%89GC%E8%B0%83%E4%BC%98/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JVM（九）JVM内存监测工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/28/JVM%EF%BC%88%E4%B9%9D%EF%BC%89JVM%E5%86%85%E5%AD%98%E7%9B%91%E6%B5%8B%E5%B7%A5%E5%85%B7/">JVM（九）JVM内存监测工具</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/28/JVM%EF%BC%88%E4%B9%9D%EF%BC%89JVM%E5%86%85%E5%AD%98%E7%9B%91%E6%B5%8B%E5%B7%A5%E5%85%B7/" class="archive-article-date">
+  	<time datetime="2021-10-28T11:16:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JVM监测工具"><a href="#JVM监测工具" class="headerlink" title="JVM监测工具"></a>JVM监测工具</h2><ul>
+<li><p>jps：查看java进程 </p>
+</li>
+<li><p>jstat 进程号：只能查看当前时间的内存情况。</p>
+</li>
+<li><p>jmap 进程号：查看当前时间堆的内存情况。</p>
+</li>
+<li><p>jconsole：图形监控界面。例如，如果通过jconsole中的“执行GC”按钮发现GC回收的内存太少，就说明当前进程是存在问题的（至少是可以被优化的）。</p>
+</li>
+<li><p>jvisiualvm：监视-堆Dump-查找最大对象，从中可以发现当前进程中是哪个对象占据了最大的内存，从而进行优化。通过VM参数可以设置当内存溢出时，自动生成dump文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX+HeapDumpOnOutOfMemoryError</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/28/JVM%EF%BC%88%E4%B9%9D%EF%BC%89JVM%E5%86%85%E5%AD%98%E7%9B%91%E6%B5%8B%E5%B7%A5%E5%85%B7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-JVM（八）双亲委派" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -762,454 +1168,9 @@
 
 
   
-    <article id="post-JVM（二）JAVA内存模型（Java-Memory-Model，简称JMM）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/">JVM（二）JAVA内存模型（Java Memory Model，简称JMM）</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2021-10-19T11:34:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h2><p>JMM主要用于定义变量的访问规则（所有线程的共享变量，不能是局部变量），它将内存划分为两个区域：主内存区，工作内存区</p>
-<p><img src="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/JMM.png" alt="JMM" title="JMM"></p>
-<ul>
-<li>主内存区：真实存放变量</li>
-<li>工作内存：存放各个变量的副本，供各个线程所使用。</li>
-</ul>
-<p>各个线程不能直接访问主内存，也不能访问其他线程的工作内存，只能访问自己私有的工作内存，通过主内存间接的访问其他线程的工作内存，这是高并发下数据不安全的根本原因。</p>
-<p>如果线程B修改了变量i的值，线程A如何才能获取到线程B修改后的值？</p>
-<ol>
-<li>线程B将数据同步到主内存——Save</li>
-<li>线程A获取主内存中最新的数据——Load</li>
-</ol>
-<h4 id="不同线程交换数据时经历的步骤"><a href="#不同线程交换数据时经历的步骤" class="headerlink" title="不同线程交换数据时经历的步骤"></a>不同线程交换数据时经历的步骤</h4><ol>
-<li>Lock:将主内存中的变量，标识为一条线程的独占状态</li>
-<li>Read:将主内存中的变量读取或拷贝到工作内存中。</li>
-<li>Load:将2中读取的变量拷贝到变量的副本中。</li>
-<li>Use:将工作内存中的变量副本传递给线程使用。</li>
-</ol>
-<hr>
-<ol start="5">
-<li>Assign:把线程正在使用的变量，传递给工作内存中的变量副本中。</li>
-<li>Store:将工作内存中变量副本的值，传递到主内存中。</li>
-<li>Write:将6中传过来的变量副本的值作为一个主内存中的变量进行存储。</li>
-<li>Unlock:解除线程的独占状态。</li>
-</ol>
-<p>JVM要求以上八个动作必须是原子性的，但是对于64位的数据类型（long、double）有些非原子协议。说明在执行以上八个动作时，可能会出现只读取或写入了半个long或double，因此出现错误。</p>
-<p>如何避免出现上述错误？</p>
-<ul>
-<li>商用JVM已经充分考虑了此问题，不需要我们操作。</li>
-<li>可以通过volatile避免读取半个数据的问题。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%BA%8C%EF%BC%89JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%EF%BC%88Java-Memory-Model%EF%BC%8C%E7%AE%80%E7%A7%B0JMM%EF%BC%89/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-JVM（一）类的生命周期" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">JVM（一）类的生命周期</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="archive-article-date">
-  	<time datetime="2021-10-19T05:36:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="什么是JVM"><a href="#什么是JVM" class="headerlink" title="什么是JVM?"></a>什么是JVM?</h2><p>​        JVM是Java Virtual Machine（java）虚拟机的缩写，JVM是一种用于计算机设备的规范，它是一个虚构出来的计算机，是通过在实际的计算机上仿真模拟各种计算机功能来实现的。引入java语言虚拟机后，java语言在不同平台上运行时不需要重新编译。java语言使用java虚拟机屏蔽了与具体平台相关的信息，使得java语言编译程序只需生成在java虚拟机上的目标代码（字节码），就可以在多种平台上不加修改地运行（一次编译，处处运行）。</p>
-<h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p>​        生命周期：加载-&gt;连接-&gt;初始化-&gt;使用-&gt;卸载</p>
-<ul>
-<li><p>加载</p>
-<p>查找并加载类的二进制数据（class文件），将硬盘上的class文件加载到JJVM内存中。</p>
-</li>
-<li><p>连接</p>
-<p>确定类与类之间的关系，连接阶段有三个子阶段分别是：验证，准备，解析。</p>
-<ul>
-<li>验证：校验.class文件的正确性。</li>
-<li>准备：为static静态变量分配内存，并初始化默认值，普通变量暂时不做处理。在准备阶段，JVM中只有类，没有对象。</li>
-<li>解析：把类中的符号引用（全类名，如”org.ysmir.entity.Student“），转为直接引用（内存地址）。</li>
-</ul>
-</li>
-<li><p>初始化</p>
-<p>为static静态变量赋予正确的值。</p>
-</li>
-<li><p>使用</p>
-<p>对象的初始化、垃圾回收、销毁。</p>
-</li>
-<li><p>卸载</p>
-<p>当类使用完后，类就会进入卸载阶段。衡量标准为：</p>
-<ol>
-<li>改类的所有实例都已被回收，也就是堆中不存在该类的任何实例。</li>
-<li>加载该类的ClassLoader都已被回收。</li>
-<li>该类对应的java.lang.Class对象没有任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
-</ol>
-</li>
-</ul>
-<h2 id="JVM结束生命周期的时机"><a href="#JVM结束生命周期的时机" class="headerlink" title="JVM结束生命周期的时机"></a>JVM结束生命周期的时机</h2><ul>
-<li>正常结束（卸载阶段）</li>
-<li>异常结束（Exception）/错误（Error）</li>
-<li>System.exit()</li>
-<li>操作系统异常</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%B8%80%EF%BC%89%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SQL优化（六）锁机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/">SQL优化（六）锁机制</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/" class="archive-article-date">
-  	<time datetime="2021-10-14T06:53:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a>锁机制</h2><p>锁机制：解决因资源共享而造成的并发问题。</p>
-<h3 id="锁的分类："><a href="#锁的分类：" class="headerlink" title="锁的分类："></a>锁的分类：</h3><ul>
-<li>根据操作类型分类：<ul>
-<li>读锁（共享锁）：对同一个数据，多个读操作可以同时进行，互不干扰。</li>
-<li>写锁（排他锁、互斥锁）：如果当前写操作没有完毕，则无法进行其他的读写操作。</li>
-</ul>
-</li>
-<li>根据操作范围分类：<ul>
-<li>表锁：一次性对一张表整体加锁。如MyISAM存储引擎使用表锁，开销小，加锁快。无死锁，但锁的范围大，容易发生锁冲突，并发度低。</li>
-<li>行锁：一次性对一条数据加锁。如InnoDB存储引擎使用行锁，开销大，加锁慢。容易出现死锁。锁的范围较小，不容易发生锁冲突，并发度高（很小概率发生高并发问题：脏读、幻读、不可重复读以及丢失更新）。</li>
-<li>页锁</li>
-</ul>
-</li>
-</ul>
-<h3 id="表锁："><a href="#表锁：" class="headerlink" title="表锁："></a>表锁：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#加锁</span><br><span class="line">lock table 表1 read/write ,表2 read/write ,...... ;</span><br><span class="line">#释放锁</span><br><span class="line">unlock tables;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>读锁</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock talbe 表 read;</span><br></pre></td></tr></table></figure>
-
-<p>如果某一个会话对一个表加了读锁，则该会话只能对该表进行读操作，不能进行写操作，对其他表读写操作都不能进行。其他会话可以对该表进行读操作，但进行写操作会进入阻塞状态，等待锁释放后才能继续执行，对其他表读写操作都可以进行。</p>
-</li>
-<li><p>写锁</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock table 表 write;</span><br></pre></td></tr></table></figure>
-
-<p>如果一个会话对一个表加了写锁，则该会话可以对该表进行任何操作，但不能对其他表进行任何操作。其他会话只有当该会话释放锁后才能对该表进行读写操作。</p>
-</li>
-</ul>
-<h3 id="行锁："><a href="#行锁：" class="headerlink" title="行锁："></a>行锁：</h3><p>关闭MySQL自提交：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set autocommit = 0;</span><br><span class="line">set transaction;</span><br><span class="line">begin;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>如果某一会话对某条数据进行了DML操作，则其他会话必须等待该会话结束事务（commit/rollback）后，才能对该数据进行操作。</p>
-</li>
-<li><p>表锁通过unlock tables语句和事务解锁，行锁是通过事务解锁。</p>
-</li>
-<li><p>行锁一次锁一行数据，如果操作的是不同数据，则互不干扰。</p>
-</li>
-<li><p>如果没有索引或者索引失效，行锁会自动转化为表锁。</p>
-</li>
-<li><p>行锁有一种特殊情况——间隙锁。</p>
-<ul>
-<li>间隙：值在where范围内，但却不存在</li>
-<li>MySQL会自动给间隙增加间隙锁（行锁）。</li>
-</ul>
-</li>
-<li><p>如果有where，则行锁实际加锁的范围就是where后面的范围（不是实际的值）。</p>
-</li>
-<li><p>InnoDB默认采用行锁</p>
-<ul>
-<li>优点：并发能力强，效率高。</li>
-<li>缺点：比表锁性能损耗大。</li>
-<li>建议高并发使用InnoDB，其他使用MyISAM。</li>
-</ul>
-</li>
-<li><p>查询行锁</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> 表 <span class="keyword">where</span> 条件 <span class="keyword">for</span> update;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="MySQL表级锁的锁模式"><a href="#MySQL表级锁的锁模式" class="headerlink" title="MySQL表级锁的锁模式"></a>MySQL表级锁的锁模式</h3><p>MyISAM在执行查询语句（SELECT）前，会自动给涉及的所有表加读锁，在执行更新操作（DML）前，会自动给涉及的表加写锁。</p>
-<p>对MyISAM表进行操作时，会出现以下情况：</p>
-<ul>
-<li>对MyISAM表的读操作（加读锁），不会阻塞其他进程（会话）对同一表的读请求，但会阻塞对同一表的写请求。只有当读锁释放后，才会执行其他进程的写操作。</li>
-<li>对MyISAM表的写操作（加写锁），会阻塞其他进程（会话）对同一表的读和写操作，只有当写锁释放后，才会执行其他进程的读写操作。</li>
-</ul>
-<h2 id="分析表锁定"><a href="#分析表锁定" class="headerlink" title="分析表锁定"></a>分析表锁定</h2><p>查看哪些表加了锁：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show open tables;#代表加了锁</span><br></pre></td></tr></table></figure>
-
-<p>分析表锁定的严重程度：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;table%&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>Table_locks_immediate:即可能获取到的锁。</p>
-<p>Table_locks_waited:需要等待的表所数（如果该值越大，说明越大的锁竞争）。</p>
-<p>一般建议如果Table_locks_immediate/Table_locks_waited&gt;5000，建议采用InnoDB引擎，否则采用MyISAM引擎。</p>
-<h2 id="分析行锁定"><a href="#分析行锁定" class="headerlink" title="分析行锁定"></a>分析行锁定</h2><p>查看哪些行加了锁：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show status like &#x27;%innodb_row_lock%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p>Innodb_row_lock_current_waits:当前正在等待锁的数量。</p>
-<p>Innodb_row_lock_time:等待总时长。从系统启动到当前总共锁定的时间。</p>
-<p>Innodb_row_lock_time_avg:平均等待时常。从系统启动到现在平均等待的时间。</p>
-<p>Innodb_row_lock_time_max:最大等待时常，最大等待的一次时间。</p>
-<p>Innodb_row_lock_waits:等待次数。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/14/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E5%85%AD%EF%BC%89%E9%94%81%E6%9C%BA%E5%88%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SQL优化（五）分析海量数据" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/13/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%94%EF%BC%89%E5%88%86%E6%9E%90%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/">SQL优化（五）分析海量数据</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/13/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%94%EF%BC%89%E5%88%86%E6%9E%90%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/" class="archive-article-date">
-  	<time datetime="2021-10-13T12:51:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="profiles"><a href="#profiles" class="headerlink" title="profiles"></a>profiles</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%profiling%&#x27;;#查询profiles是否开启</span><br><span class="line">set profiling = on; #设置为开启</span><br><span class="line">show profiles;	#默认为关闭,会记录所有profiling打开之后的全部SQL查询语句所花费的时间，缺点是不够精确。</span><br></pre></td></tr></table></figure>
-
-<h3 id="精确分析——SQL诊断"><a href="#精确分析——SQL诊断" class="headerlink" title="精确分析——SQL诊断"></a>精确分析——SQL诊断</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show profile all for query Query_Id;</span><br><span class="line">show profile ...., ..., for query Query_Id;</span><br></pre></td></tr></table></figure>
-
-<h3 id="全局查询日志"><a href="#全局查询日志" class="headerlink" title="全局查询日志"></a>全局查询日志</h3><p>记录开启之后的全部SQL语句。（这些全局的记录操作仅仅在调优、开发时开启即刻，在部署时关闭）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%general_log%&#x27;;</span><br><span class="line">set global general_log = 1;#开启全局日志</span><br><span class="line">set global log_output=&#x27;table&#x27;;#开启将数据记录到表</span><br><span class="line">set global general_log_file=&#x27;文件地址&#x27;;</span><br><span class="line">set global log_output=&#x27;file&#x27;;#开启将数据记录到文件中</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">SQL优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/13/SQL%E4%BC%98%E5%8C%96%EF%BC%88%E4%BA%94%EF%BC%89%E5%88%86%E6%9E%90%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1308,7 +1269,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Nginx配置</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">RabbitMQ</a>
               </li>
              
               <li class="article-tag-list-item">
