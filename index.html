@@ -152,6 +152,99 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-RabbitMQ（二）WorkQueue模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/11/15/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89WorkQueue%E6%A8%A1%E5%9E%8B/">RabbitMQ（二）WorkQueue模型</a>
+    </h1>
+  
+
+        
+        <a href="/2021/11/15/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89WorkQueue%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
+  	<time datetime="2021-11-15T12:13:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>生产者进程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Provider</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendMessage</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i =<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">                channel.basicPublish(<span class="string">&quot;&quot;</span>,<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">null</span>, (<span class="string">&quot;hello work queue&quot;</span>+i).getBytes());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            RabbitmqUtil.closeAll(channel,connection);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Provider().testSendMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>消费者进程一：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAcceptMessage</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line"></span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            channel.basicConsume(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">new</span> DefaultConsumer(channel)&#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;消费者一消费了:&quot;</span>+<span class="keyword">new</span> String(body));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Consumer1().testAcceptMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>消费者进程二：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAcceptMessage</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line"></span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            channel.basicConsume(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">new</span> DefaultConsumer(channel)&#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;消费者二消费了:&quot;</span>+<span class="keyword">new</span> String(body));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Consumer2().testAcceptMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序的运行结果为：</p>
+<blockquote>
+<p>消费者一消费了:hello work queue0<br>消费者一消费了:hello work queue2<br>消费者一消费了:hello work queue4<br>消费者一消费了:hello work queue6<br>消费者一消费了:hello work queue8</p>
+</blockquote>
+<blockquote>
+<p>消费者二消费了:hello work queue1<br>消费者二消费了:hello work queue3<br>消费者二消费了:hello work queue5<br>消费者二消费了:hello work queue7<br>消费者二消费了:hello work queue9</p>
+</blockquote>
+<p>由运行结果可以得知，如果开启了自动确认(autoAck)，WorkQueue模型会采用了轮询的方式，使得每个消费者进程都能公平的得到消息进行消费。如果一个消费者获得了一些消息，但是它却在消费消息时宕机，那么消息队列就会丢失未处理的消息，所以自动确认是不合理的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">channel.basicQos(<span class="number">1</span>);<span class="comment">//每此只能消费一个消息</span></span><br><span class="line"><span class="comment">//参数一:确认队列中具体的消息</span></span><br><span class="line"><span class="comment">//参数二:是否开启多个消息同时消费</span></span><br><span class="line">channel.basicAck(envelope.getDeliveryTag(),<span class="keyword">false</span>);<span class="comment">//设置参数autoAck为false，并且手动确认。</span></span><br></pre></td></tr></table></figure>
+
+<p>设置每个消费者每次只能消费一个消息，关闭自动确认然后手动确认后，则不会采用轮询，而是采用了能者多劳的策略，性能高的消费者会消费更多的消息。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">RabbitMQ</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/11/15/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89WorkQueue%E6%A8%A1%E5%9E%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-RabbitMQ（一）HelloWorld模型" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1076,98 +1169,6 @@
 
 
   
-    <article id="post-JVM（三）volatile关键字" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/">JVM（三）volatile关键字</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/" class="archive-article-date">
-  	<time datetime="2021-10-19T12:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><p>概念：JVM提供的一个轻量级的同步机制</p>
-<p>作用：</p>
-<ul>
-<li><p>防止JVM对long/double等64位的非原子行协议进行误操作（读取半个数据）。</p>
-</li>
-<li><p>可以使变量对所有线程立即可见（某一个线程如果修改了工作内存中的变量副本，那么加上volatile之后，该变量就会立刻同步到其他线程的工作内存中）。</p>
-</li>
-<li><p>禁止指令的重排序（reorder）优化。重排序：为了提高执行效率，将非原子性的操作拆分成原子性操作，再进行二次排序。重排序不会影响<strong>单线程</strong>的执行结果。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">num=<span class="number">10</span>;			<span class="comment">//原子性操作，不可再拆</span></span><br><span class="line"><span class="keyword">int</span> num=<span class="number">10</span>;		<span class="comment">//非原子性操作，可以拆分为int num; num=10;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>volatile通过“内存屏障”防止重排序问题：</p>
-<ul>
-<li>在volatile写操作前，插入StoreStore屏障</li>
-<li>在volatile写操作后，插入StoreLoad屏障</li>
-<li>在volatile读操作前，插入LoadLoad屏障</li>
-<li>在volatile读操作后，插入LoadStore屏障</li>
-</ul>
-</li>
-</ul>
-<p><em><strong>volatile</strong></em>不能保证原子性、不能保证线程安全。要想保证原子性/线程安全，可以使用原子包java.util.concrent.aotmic中的类，该类能保证原子性，是因为提供了compareAndSet()方法，该方法提供了CAS算法（无锁算法）。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1269,15 +1270,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">RabbitMQ</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Nginx配置</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">RabbitMQ</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -152,6 +152,98 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JVM（三）volatile关键字" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/">JVM（三）volatile关键字</a>
+    </h1>
+  
+
+        
+        <a href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/" class="archive-article-date">
+  	<time datetime="2021-10-19T12:30:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><p>概念：JVM提供的一个轻量级的同步机制</p>
+<p>作用：</p>
+<ul>
+<li><p>防止JVM对long/double等64位的非原子行协议进行误操作（读取半个数据）。</p>
+</li>
+<li><p>可以使变量对所有线程立即可见（某一个线程如果修改了工作内存中的变量副本，那么加上volatile之后，该变量就会立刻同步到其他线程的工作内存中）。</p>
+</li>
+<li><p>禁止指令的重排序（reorder）优化。重排序：为了提高执行效率，将非原子性的操作拆分成原子性操作，再进行二次排序。重排序不会影响<strong>单线程</strong>的执行结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">num=<span class="number">10</span>;			<span class="comment">//原子性操作，不可再拆</span></span><br><span class="line"><span class="keyword">int</span> num=<span class="number">10</span>;		<span class="comment">//非原子性操作，可以拆分为int num; num=10;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>volatile通过“内存屏障”防止重排序问题：</p>
+<ul>
+<li>在volatile写操作前，插入StoreStore屏障</li>
+<li>在volatile写操作后，插入StoreLoad屏障</li>
+<li>在volatile读操作前，插入LoadLoad屏障</li>
+<li>在volatile读操作后，插入LoadStore屏障</li>
+</ul>
+</li>
+</ul>
+<p><em><strong>volatile</strong></em>不能保证原子性、不能保证线程安全。要想保证原子性/线程安全，可以使用原子包java.util.concrent.aotmic中的类，该类能保证原子性，是因为提供了compareAndSet()方法，该方法提供了CAS算法（无锁算法）。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">JVM</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/10/19/JVM%EF%BC%88%E4%B8%89%EF%BC%89volatile%E5%85%B3%E9%94%AE%E5%AD%97/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-JVM（二）JAVA内存模型（Java-Memory-Model，简称JMM）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1216,105 +1308,6 @@
 
 
   
-    <article id="post-二十三种设计模式（二十五）总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%94%EF%BC%89%E6%80%BB%E7%BB%93/">二十三种设计模式（二十五）总结</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%94%EF%BC%89%E6%80%BB%E7%BB%93/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>设计模式的目标：管理变化，提高复用。</p>
-<p>什么时候不用模式？</p>
-<ul>
-<li>代码可读性很差时</li>
-<li>需求理解还很浅时</li>
-<li>变化没有显现时</li>
-<li>不是系统的关键依赖点</li>
-<li>项目没有复用价值时</li>
-<li>项目将要发布时</li>
-</ul>
-<p>设计模式经验：</p>
-<ul>
-<li>不要为模式而模式</li>
-<li>关注抽象类&amp;接口</li>
-<li>理清变化点和稳定点</li>
-<li>审视依赖关系</li>
-<li>要有Framework和Application的区隔思维</li>
-<li>良好的设计是演化的结果</li>
-</ul>
-<p>设计模式成长之路：</p>
-<ul>
-<li>“手中无剑，心中无剑”：见模式而不知</li>
-<li>“手中有剑，心中无剑”：可以识别模式，作为应用开发人员使用模式。</li>
-<li>”手中有剑，心中有剑“：作为框架开发人员为应用设计某些模式。</li>
-<li>”手中无剑，心中有剑“：忘掉模式，只有原则。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%E5%8D%81%E4%BA%94%EF%BC%89%E6%80%BB%E7%BB%93/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1416,15 +1409,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">RabbitMQ</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">Nginx配置</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">SQL优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">RabbitMQ</a>
               </li>
              
               <li class="article-tag-list-item">

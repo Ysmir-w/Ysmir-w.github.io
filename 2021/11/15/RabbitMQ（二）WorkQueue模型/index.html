@@ -6,22 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>二十三种设计模式（十三）Facade 门面模式） | Ysmir的博客</title>
+  <title>RabbitMQ（二）WorkQueue模型 | Ysmir的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="动机：如果组建的客户和组件中各种复杂的子系统有了过多的耦合，随着外部客户程序和各子系统的演化，这种过多的耦合面临很多变化的挑战。Facade门面模式能简化外部客户程序和系统间的交互接口，将外部客户程序的演化和内部子系统的变化之间的依赖互相解耦。 Facade（门面模式）：为子系统中的一组接口提供一个一致（稳定）的界面，Facade模式定义了一个高层接口，这个接口使得这一子系统更加容易使用（复用）。">
+  <meta name="description" content="生产者进程： 123456789101112131415161718192021public class Provider &amp;#123;    public void testSendMessage()&amp;#123;        Connection connection &#x3D; null;        Channel channel &#x3D; null;        try &amp;#123;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="二十三种设计模式（十三）Facade 门面模式）">
-<meta property="og:url" content="http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89Facade%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:title" content="RabbitMQ（二）WorkQueue模型">
+<meta property="og:url" content="http://example.com/2021/11/15/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89WorkQueue%E6%A8%A1%E5%9E%8B/index.html">
 <meta property="og:site_name" content="Ysmir的博客">
-<meta property="og:description" content="动机：如果组建的客户和组件中各种复杂的子系统有了过多的耦合，随着外部客户程序和各子系统的演化，这种过多的耦合面临很多变化的挑战。Facade门面模式能简化外部客户程序和系统间的交互接口，将外部客户程序的演化和内部子系统的变化之间的依赖互相解耦。 Facade（门面模式）：为子系统中的一组接口提供一个一致（稳定）的界面，Facade模式定义了一个高层接口，这个接口使得这一子系统更加容易使用（复用）。">
+<meta property="og:description" content="生产者进程： 123456789101112131415161718192021public class Provider &amp;#123;    public void testSendMessage()&amp;#123;        Connection connection &#x3D; null;        Channel channel &#x3D; null;        try &amp;#123;">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89Facade%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F/Facade.png">
-<meta property="article:published_time" content="2021-10-08T03:04:28.000Z">
-<meta property="article:modified_time" content="2021-10-13T13:28:29.792Z">
+<meta property="article:published_time" content="2021-11-15T12:13:00.000Z">
+<meta property="article:modified_time" content="2021-11-15T12:55:04.118Z">
 <meta property="article:author" content="Ysmir">
-<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="RabbitMQ">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89Facade%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F/Facade.png">
   
     <link rel="alternative" href="/atom.xml" title="Ysmir的博客" type="application/atom+xml">
   
@@ -157,35 +155,46 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-二十三种设计模式（十三）Facade门面模式" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-RabbitMQ（二）WorkQueue模型" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      二十三种设计模式（十三）Facade 门面模式）
+      RabbitMQ（二）WorkQueue模型
     </h1>
   
 
         
-        <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89Facade%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2021-10-08T03:04:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-08</time>
+        <a href="/2021/11/15/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89WorkQueue%E6%A8%A1%E5%9E%8B/" class="archive-article-date">
+  	<time datetime="2021-11-15T12:13:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-15</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>动机：如果组建的客户和组件中各种复杂的子系统有了过多的耦合，随着外部客户程序和各子系统的演化，这种过多的耦合面临很多变化的挑战。Facade门面模式能简化外部客户程序和系统间的交互接口，将外部客户程序的演化和内部子系统的变化之间的依赖互相解耦。</p>
-<p>Facade（门面模式）：为子系统中的一组接口提供一个一致（稳定）的界面，Facade模式定义了一个高层接口，这个接口使得这一子系统更加容易使用（复用）。</p>
-<p>Facade门面模式结构图如下：</p>
-<p><img src="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89Facade%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F/Facade.png" alt="门面模式" title="门面模式"></p>
-<h3 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h3><ul>
-<li>从客户程序的角度来看，Facade模式简化了整个组件系统的接口，对于组件内部与外部客户程序来说，达到了一种“解耦”的效果——内部子系统的任何变化不会影响到Facade接口的变化。</li>
-<li>Facade设计模式更注重从架构的层次去看整个系统，而不是单个类的层次。Facade很多时候更是一种架构设计模式。</li>
-<li>Facade设计模式并非一个集装箱，可以任意地放进任何多个对象。Facade模式中组件的内部应该是“相互耦合关系比较大的一系列组件”，而不是一个简单的功能集合“。</li>
-</ul>
+        <p>生产者进程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Provider</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendMessage</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i =<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">                channel.basicPublish(<span class="string">&quot;&quot;</span>,<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">null</span>, (<span class="string">&quot;hello work queue&quot;</span>+i).getBytes());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            RabbitmqUtil.closeAll(channel,connection);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Provider().testSendMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>消费者进程一：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAcceptMessage</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line"></span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            channel.basicConsume(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">new</span> DefaultConsumer(channel)&#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;消费者一消费了:&quot;</span>+<span class="keyword">new</span> String(body));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Consumer1().testAcceptMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>消费者进程二：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAcceptMessage</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Connection connection = <span class="keyword">null</span>;</span><br><span class="line">        Channel channel = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            connection = RabbitmqUtil.createConnection();</span><br><span class="line">            channel = connection.createChannel();</span><br><span class="line"></span><br><span class="line">            channel.queueDeclare(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">false</span>,<span class="keyword">false</span>,<span class="keyword">null</span>);</span><br><span class="line">            channel.basicConsume(<span class="string">&quot;workQueue&quot;</span>,<span class="keyword">true</span>,<span class="keyword">new</span> DefaultConsumer(channel)&#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;消费者二消费了:&quot;</span>+<span class="keyword">new</span> String(body));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Consumer2().testAcceptMessage();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序的运行结果为：</p>
+<blockquote>
+<p>消费者一消费了:hello work queue0<br>消费者一消费了:hello work queue2<br>消费者一消费了:hello work queue4<br>消费者一消费了:hello work queue6<br>消费者一消费了:hello work queue8</p>
+</blockquote>
+<blockquote>
+<p>消费者二消费了:hello work queue1<br>消费者二消费了:hello work queue3<br>消费者二消费了:hello work queue5<br>消费者二消费了:hello work queue7<br>消费者二消费了:hello work queue9</p>
+</blockquote>
+<p>由运行结果可以得知，如果开启了自动确认(autoAck)，WorkQueue模型会采用了轮询的方式，使得每个消费者进程都能公平的得到消息进行消费。如果一个消费者获得了一些消息，但是它却在消费消息时宕机，那么消息队列就会丢失未处理的消息，所以自动确认是不合理的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">channel.basicQos(<span class="number">1</span>);<span class="comment">//每此只能消费一个消息</span></span><br><span class="line"><span class="comment">//参数一:确认队列中具体的消息</span></span><br><span class="line"><span class="comment">//参数二:是否开启多个消息同时消费</span></span><br><span class="line">channel.basicAck(envelope.getDeliveryTag(),<span class="keyword">false</span>);<span class="comment">//设置参数autoAck为false，并且手动确认。</span></span><br></pre></td></tr></table></figure>
+
+<p>设置每个消费者每次只能消费一个消息，关闭自动确认然后手动确认后，则不会采用轮询，而是采用了能者多劳的策略，性能高的消费者会消费更多的消息。</p>
 
       
 
@@ -220,7 +229,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">设计模式</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">RabbitMQ</a>
         		</li>
       		
 		</ul>
@@ -276,7 +285,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%B8%89%EF%BC%89Facade%E9%97%A8%E9%9D%A2%E6%A8%A1%E5%BC%8F/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/11/15/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89WorkQueue%E6%A8%A1%E5%9E%8B/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -290,18 +299,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E5%9B%9B%EF%BC%89Proxy%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          二十三种设计模式（十四）Proxy 代理模式
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/10/08/%E4%BA%8C%E5%8D%81%E4%B8%89%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%8D%81%E4%BA%8C%EF%BC%89Flyweight%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">二十三种设计模式（十二）Flyweight 享元模式</div>
+    <a href="/2021/11/14/RabbitMQ%EF%BC%88%E4%B8%80%EF%BC%89HelloWorld%E6%A8%A1%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RabbitMQ（一）HelloWorld模型</div>
       <i class="icon-circle-right"></i>
     </a>
   
